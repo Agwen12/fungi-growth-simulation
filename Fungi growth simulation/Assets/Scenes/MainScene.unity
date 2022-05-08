@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: 157966926}
   - component: {fileID: 157966925}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: MushroomCore
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

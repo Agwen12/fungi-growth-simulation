@@ -8,13 +8,14 @@ public enum MushroomState
     Hyphal
 }
 
-public class Mushroom : MonoBehaviour
+public class Mushroom : MonoBehaviour, IMushroom
 {
     private MushroomState _state = MushroomState.Tip;
-    private GameObject _gameObject { get; set; }
-    private GameObject _parent { get; set; }
 
-    public static Mushroom CreateComponent(GameObject gameObject, GameObject parent = null)
+    public GameObject _gameObject { get; set; }
+    public IMushroom _parent { get; set; }
+
+    public static Mushroom CreateComponent(GameObject gameObject, IMushroom parent = null)
     {
         Mushroom mushroom = gameObject.AddComponent<Mushroom>();
         mushroom._gameObject = gameObject;
@@ -33,15 +34,15 @@ public class Mushroom : MonoBehaviour
     {
         if (_state == MushroomState.Tip)
         {
-            Vector3 parentPosition = _parent == null ? new Vector3(0, 0, 0) : _parent.transform.position;
-            Vector3 parentDirection = _gameObject.transform.position - parentPosition;
-            Vector3 rotationAxis = parentDirection;
-            Quaternion rotation = Quaternion.AngleAxis(Helper.sampleFromNormalDistribution(56, 17), rotationAxis);
-            Vector3 childPosition = parentPosition + rotation * parentDirection;
-            // childPosition == parentPosition for some reason, need to investigate that
-
-            Mushroom child = MushroomCore.SpawnMushroom(childPosition, _parent);
-            child._parent = _gameObject;
+            Vector3 parentPosition = _parent == null ? new Vector3(0, 0, 0) : _parent._gameObject.transform.position;
+            Vector3 currPosition = _gameObject.transform.position;
+            Vector3 direction = currPosition - parentPosition;
+            
+            float angle = Helper.sampleFromNormalDistribution(56, 17);
+            Quaternion rotation = Quaternion.AngleAxis(angle, direction);
+            
+            Vector3 childPosition = currPosition + rotation * direction;
+            Mushroom child = MushroomCore.SpawnMushroom(childPosition, this);
             _state = MushroomState.Hyphal;
         }
     }

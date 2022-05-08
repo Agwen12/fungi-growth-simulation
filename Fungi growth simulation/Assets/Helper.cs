@@ -1,9 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class Helper : MonoBehaviour
+public class Helper
 {
     // https://stackoverflow.com/questions/218060/random-gaussian-variables
     public static float sampleFromNormalDistribution(double mean, double stdDev)
