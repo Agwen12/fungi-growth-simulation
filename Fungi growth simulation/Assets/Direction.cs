@@ -65,7 +65,7 @@ public static class DirectionMethods
         Vector3 directionVector3 = ToVector3(direction);
         float[] coords = { 1, 1, 1 };
 
-        if (Mathf.Abs(directionVector3.x) + Mathf.Abs(directionVector3.y) + Mathf.Abs(directionVector3.z) == 1) // 4 sides
+        if (DirectionMethods.IsSquare(directionVector3)) // 4 sides
         {
             // replace 0s with possible values(all permutations)
             float[,] replacements = { { 1, 1 }, { -1, 1 }, { 1, -1 }, { -1, -1 } };
@@ -112,5 +112,53 @@ public static class DirectionMethods
     {
         List<Direction> neighbors = GetNeighbors(direction);
         return neighbors[Helper.Rnd.Next(neighbors.Count)];
+    }
+
+
+    public static bool IsSquare(Vector3 vector) {
+        return vector.sqrMagnitude == 1;
+    }
+
+    public static Vector3[] GetBranchDirection(Direction direction) {
+        Vector3 vector = ToVector3(direction);
+        if(DirectionMethods.IsSquare(vector))
+        {
+            int[] units = { Helper.Rnd.Next(0, 1), Helper.Rnd.Next(0, 1) };
+            int unitIdx = 0;
+            Vector3 branch1 = new Vector3(1, 1, 1);
+            Vector3 branch2 = new Vector3(1, 1, 1);
+            for (int i = 0; i < 3; i++)
+            {
+                if (vector[i] == 0)
+                {
+                    branch1[i] = units[unitIdx];
+                    branch2[i] = -units[unitIdx];
+                    unitIdx++;
+                }
+                else
+                {
+                    branch1[i] = vector[i];
+                    branch2[i] = vector[i];
+                }
+            }
+
+            return  new Vector3[] { branch1, branch2 };
+        }
+        else {
+            int fixedFace = Helper.Rnd.Next(0, 2);
+            Vector3 squareFace = new Vector3(0, 0, 0);
+            Vector3 hexFace = new Vector3(0, 0, 0);
+            squareFace[fixedFace] = vector[fixedFace];
+            for (int i = 0; i < 3; i++)
+            {
+                if(i != fixedFace) 
+                {
+                    hexFace[i] = vector[i];
+                } else {
+                    hexFace[i] = -squareFace[i];
+                }
+            }
+            return new Vector3[] { squareFace, hexFace };
+        }
     }
 }

@@ -39,15 +39,28 @@ public class Mushroom : MonoBehaviour, IMushroom
             Vector3 parentPosition = _parent == null ? new Vector3(0, 0, 0) : _parent._gameObject.transform.position;
             Vector3 currPosition = _gameObject.transform.position;
             Vector3 direction = currPosition - parentPosition;
-            
-            float angle = Helper.SampleFromNormalDistribution(56, 17);
-            // Decide if we change direction
-            if (Helper.Rnd.NextDouble() < 0.2f)
-                _direction = DirectionMethods.GetRandomDirection(_direction);
-            Quaternion rotation = Quaternion.AngleAxis(angle, DirectionMethods.ToVector3(_direction));
 
-            Vector3 childPosition = currPosition + rotation * direction;
-            Mushroom child = MushroomCore.SpawnMushroom(childPosition, this, _direction);
+            if (Helper.Rnd.NextDouble() < 0.01f)
+            { //Branch
+                Vector3[] branchDirections = DirectionMethods.GetBranchDirection(_direction);
+                Vector3 childPosition1 = currPosition + branchDirections[0];
+                Vector3 childPosition2 = currPosition + branchDirections[1];
+
+                Mushroom child1 = MushroomCore.SpawnMushroom(childPosition1, this, _direction);
+                Mushroom child2 = MushroomCore.SpawnMushroom(childPosition2, this, _direction);
+
+            } else {
+              //Standart growth
+                float angle = Helper.SampleFromNormalDistribution(56, 17);
+                // Decide if we change direction
+                if (Helper.Rnd.NextDouble() < 0.2f)
+                    _direction = DirectionMethods.GetRandomDirection(_direction);
+                Quaternion rotation = Quaternion.AngleAxis(angle, DirectionMethods.ToVector3(_direction));
+
+                Vector3 childPosition = currPosition + rotation * direction;
+                Mushroom child = MushroomCore.SpawnMushroom(childPosition, this, _direction);
+                
+            }
             _state = MushroomState.Hyphal;
         }
     }
