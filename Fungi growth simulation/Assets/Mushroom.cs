@@ -14,12 +14,14 @@ public class Mushroom : MonoBehaviour, IMushroom
 
     public GameObject _gameObject { get; set; }
     public IMushroom _parent { get; set; }
+    public Direction _direction { get; set; }
 
-    public static Mushroom CreateComponent(GameObject gameObject, IMushroom parent = null)
+    public static Mushroom CreateComponent(GameObject gameObject, IMushroom parent, Direction direction)
     {
         Mushroom mushroom = gameObject.AddComponent<Mushroom>();
         mushroom._gameObject = gameObject;
         mushroom._parent = parent;
+        mushroom._direction = direction;
         return mushroom;
     }
 
@@ -38,11 +40,14 @@ public class Mushroom : MonoBehaviour, IMushroom
             Vector3 currPosition = _gameObject.transform.position;
             Vector3 direction = currPosition - parentPosition;
             
-            float angle = Helper.sampleFromNormalDistribution(56, 17);
-            Quaternion rotation = Quaternion.AngleAxis(angle, direction);
-            
+            float angle = Helper.SampleFromNormalDistribution(56, 17);
+            // Decide if we change direction
+            if (Helper.Rnd.NextDouble() < 0.2f)
+                _direction = DirectionMethods.GetRandomDirection(_direction);
+            Quaternion rotation = Quaternion.AngleAxis(angle, DirectionMethods.ToVector3(_direction));
+
             Vector3 childPosition = currPosition + rotation * direction;
-            Mushroom child = MushroomCore.SpawnMushroom(childPosition, this);
+            Mushroom child = MushroomCore.SpawnMushroom(childPosition, this, _direction);
             _state = MushroomState.Hyphal;
         }
     }

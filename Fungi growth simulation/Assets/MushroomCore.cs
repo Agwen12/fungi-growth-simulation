@@ -22,9 +22,7 @@ public class MushroomCore : MonoBehaviour, IMushroom
         _gameObject = GameObject.Find("MushroomCore");
         _gameObject.transform.position = InitPosition;
         for (int i = 0; i < InitChildrenCount; i++)
-        {
-            SpawnMushroom(Random.onUnitSphere * InitRadius, (IMushroom)this);
-        }
+            SpawnMushroom(Random.onUnitSphere * InitRadius, (IMushroom)this, DirectionMethods.GetRandomDirection());
     }
 
     // Update is called once per frame
@@ -33,10 +31,10 @@ public class MushroomCore : MonoBehaviour, IMushroom
         
     }
 
-    public static Mushroom SpawnMushroom(Vector3 position, IMushroom parent)
+    public static Mushroom SpawnMushroom(Vector3 position, IMushroom parent, Direction direction)
     {
         GameObject mushroomGameObject = Instantiate(MushroomPrefab, position, Quaternion.identity);
-        Mushroom mushroom = Mushroom.CreateComponent(mushroomGameObject, parent);
+        Mushroom mushroom = Mushroom.CreateComponent(mushroomGameObject, parent, direction);
         _mushrooms.AddLast(mushroom);
         return mushroom;
     }

@@ -4,8 +4,10 @@ using System.Collections.Generic;
 
 public class Helper
 {
+    public static Random Rnd = new Random();
+
     // https://stackoverflow.com/questions/218060/random-gaussian-variables
-    public static float sampleFromNormalDistribution(double mean, double stdDev)
+    public static float SampleFromNormalDistribution(double mean, double stdDev)
     {
         System.Random rand = new System.Random(); //reuse this if you are generating many
         double u1 = 1.0 - rand.NextDouble(); //uniform(0,1] random doubles
