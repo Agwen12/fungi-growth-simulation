@@ -41,8 +41,11 @@ public static class DirectionMethods
         { Direction.DOWN_BACK_RIGHT, new Vector3(1, -1, -1) },
         { Direction.DOWN_BACK_LEFT, new Vector3(-1, -1, -1) }
     };
-    private static Dictionary<Vector3, Direction> _vector3ToDirection = _directionToVector3.ToDictionary((i) => i.Value, (i) => i.Key);
-    
+    private static Dictionary<Vector3, Direction> _vector3ToDirection = _directionToVector3.ToDictionary(e => e.Value, e => e.Key);
+    private static Dictionary<Direction, List<Direction>> _directionToNeighbors = Enum.GetValues(typeof(Direction))
+                                                                                      .Cast<Direction>()
+                                                                                      .ToDictionary(e => e, e => PrecalculateNeighbors(e));
+
     private static Direction FromCoords(float[] coords)
     {
         Vector3 vector3 = new Vector3(coords[0], coords[1], coords[2]);
@@ -61,13 +64,18 @@ public static class DirectionMethods
 
     public static List<Direction> GetNeighbors(Direction direction)
     {
+        return _directionToNeighbors[direction];
+    }
+
+    public static List<Direction> PrecalculateNeighbors(Direction direction)
+    {
         List<Direction> neighbors = new List<Direction>();
         Vector3 directionVector3 = ToVector3(direction);
         float[] coords = { 1, 1, 1 };
 
         if (Mathf.Abs(directionVector3.x) + Mathf.Abs(directionVector3.y) + Mathf.Abs(directionVector3.z) == 1) // 4 sides
         {
-            // replace 0s with possible values(all permutations)
+            // replace 0s with possible values (all permutations)
             float[,] replacements = { { 1, 1 }, { -1, 1 }, { 1, -1 }, { -1, -1 } };
             for (int i = 0; i < 4; i++)
             {
@@ -86,7 +94,6 @@ public static class DirectionMethods
                     coords[j] = 0;
                 coords[i] = directionVector3[i];
                 neighbors.Add(FromCoords(coords));
-
             }
 
             // keep all coordinates, multiply one by -1
@@ -108,7 +115,7 @@ public static class DirectionMethods
         return (Direction)values.GetValue(Helper.Rnd.Next(values.Length));
     }
 
-    public static Direction GetRandomDirection(Direction direction)
+    public static Direction GetRandomPossibleDirection(Direction direction)
     {
         List<Direction> neighbors = GetNeighbors(direction);
         return neighbors[Helper.Rnd.Next(neighbors.Count)];
