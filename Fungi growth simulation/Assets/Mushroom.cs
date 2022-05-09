@@ -42,7 +42,7 @@ public class Mushroom : MonoBehaviour, IMushroom
             
             float angle = Helper.SampleFromNormalDistribution(56, 17);
             // Decide if we change direction
-            if (Helper.Rnd.NextDouble() < 0.2f)
+            if (Helper.Rnd.NextDouble() < Config.changeDirectionProbability)
                 Direction = DirectionMethods.GetRandomPossibleDirection(Direction);
             Quaternion rotation = Quaternion.AngleAxis(angle, DirectionMethods.ToVector3(Direction));
 
