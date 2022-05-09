@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System;
 using UnityEngine;
 
 public enum Direction
@@ -22,36 +24,44 @@ public enum Direction
 
 public static class DirectionMethods
 {
-/*    public static HashSet<(Direction, Vector3)> DirectionDict = new HashSet<(Direction, Vector3)>
-    { () }*/
+    private static Dictionary<Direction, Vector3> _directionToVector3 = new Dictionary<Direction, Vector3>()
+    {
+        { Direction.FORWARD, new Vector3(0, 0, 1) },
+        { Direction.BACK, new Vector3(0, 0, -1) },
+        { Direction.LEFT, new Vector3(-1, 0, 0) },
+        { Direction.RIGHT, new Vector3(1, 0, 0) },
+        { Direction.UP, new Vector3(0, 1, 0) },
+        { Direction.DOWN, new Vector3(0, -1, 0) },
+        { Direction.UP_FORWARD_RIGHT, new Vector3(1, 1, 1) },
+        { Direction.UP_FORWARD_LEFT, new Vector3(-1, 1, 1) },
+        { Direction.UP_BACK_RIGHT, new Vector3(1, 1, -1) },
+        { Direction.UP_BACK_LEFT, new Vector3(-1, 1, -1) },
+        { Direction.DOWN_FORWARD_RIGHT, new Vector3(1, -1, 1) },
+        { Direction.DOWN_FORWARD_LEFT, new Vector3(-1, -1, 1) },
+        { Direction.DOWN_BACK_RIGHT, new Vector3(1, -1, -1) },
+        { Direction.DOWN_BACK_LEFT, new Vector3(-1, -1, -1) }
+    };
+    private static Dictionary<Vector3, Direction> _vector3ToDirection = _directionToVector3.ToDictionary((i) => i.Value, (i) => i.Key);
+    
+    private static Direction FromCoords(float[] coords)
+    {
+        Vector3 vector3 = new Vector3(coords[0], coords[1], coords[2]);
+        return FromVector3(vector3);
+    }
 
     public static Vector3 ToVector3(Direction direction)
     {
-        return direction switch
-        {
-            Direction.FORWARD => new Vector3(0, 0, 1),
-            Direction.BACK => new Vector3(0, 0, -1),
-            Direction.LEFT => new Vector3(-1, 0, 0),
-            Direction.RIGHT => new Vector3(1, 0, 0),
-            Direction.UP => new Vector3(0, 1, 0),
-            Direction.DOWN => new Vector3(0, -1, 0),
-            Direction.UP_FORWARD_RIGHT => new Vector3(1, 1, 1),
-            Direction.UP_FORWARD_LEFT => new Vector3(-1, 1, 1),
-            Direction.UP_BACK_RIGHT => new Vector3(1, 1, -1),
-            Direction.UP_BACK_LEFT => new Vector3(-1, 1, -1),
-            Direction.DOWN_FORWARD_RIGHT => new Vector3(1, -1, 1),
-            Direction.DOWN_FORWARD_LEFT => new Vector3(-1, -1, 1),
-            Direction.DOWN_BACK_RIGHT => new Vector3(1, -1, -1),
-            Direction.DOWN_BACK_LEFT => new Vector3(-1, -1, -1),
-            _ => new Vector3(0, 0, 0)
-        };
+        return (Vector3)_directionToVector3[direction];
     }
 
-
-
-    public static List<Vector3> GetNeighbors(Direction direction)
+    public static Direction FromVector3(Vector3 vector3)
     {
-        List<Vector3> neighbors = new List<Vector3>();
+        return (Direction)_vector3ToDirection[vector3];
+    }
+
+    public static List<Direction> GetNeighbors(Direction direction)
+    {
+        List<Direction> neighbors = new List<Direction>();
         Vector3 directionVector3 = ToVector3(direction);
         float[] coords = { 1, 1, 1 };
 
@@ -63,8 +73,8 @@ public static class DirectionMethods
             {
                 int ri = 0;
                 for (int j = 0; j < 3; j++)
-                    coords[i] = directionVector3[i] == 0 ? coords[i] = replacements[i,ri++] : directionVector3[i];
-                neighbors.Add(new Vector3(coords[0], coords[1], coords[2]));
+                    coords[j] = directionVector3[j] == 0 ? coords[j] = replacements[j,ri++] : directionVector3[j];
+                neighbors.Add(FromCoords(coords));
             }
         }
         else // 6 sides
@@ -75,7 +85,7 @@ public static class DirectionMethods
                 for (int j = 0; j < 3; j++)
                     coords[j] = 0;
                 coords[i] = directionVector3[i];
-                neighbors.Add(new Vector3(coords[0], coords[1], coords[2]));
+                neighbors.Add(FromCoords(coords));
 
             }
 
@@ -85,7 +95,7 @@ public static class DirectionMethods
                 for (int j = 0; j < 3; j++)
                     coords[j] = directionVector3[i];
                 coords[i] = -1 * directionVector3[i];
-                neighbors.Add(new Vector3(coords[0], coords[1], coords[2]));
+                neighbors.Add(FromCoords(coords));
             }
         }
 
@@ -94,13 +104,13 @@ public static class DirectionMethods
 
     public static Direction GetRandomDirection()
     {
-        var values = Direction.GetNames(typeof(Direction));
+        Array values = Enum.GetValues(typeof(Direction));
         return (Direction)values.GetValue(Helper.Rnd.Next(values.Length));
     }
 
     public static Direction GetRandomDirection(Direction direction)
     {
-        List<Vector3> neighbors = DirectionMethods.GetNeighbors(direction);
+        List<Direction> neighbors = GetNeighbors(direction);
         return neighbors[Helper.Rnd.Next(neighbors.Count)];
     }
 }
