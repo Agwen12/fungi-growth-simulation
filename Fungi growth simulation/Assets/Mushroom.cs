@@ -12,16 +12,16 @@ public class Mushroom : MonoBehaviour, IMushroom
 {
     private MushroomState _state = MushroomState.Tip;
 
-    public GameObject _gameObject { get; set; }
-    public IMushroom _parent { get; set; }
-    public Direction _direction { get; set; }
+    public GameObject GameObject { get; set; }
+    public IMushroom Parent { get; set; }
+    public Direction Direction { get; set; }
 
     public static Mushroom CreateComponent(GameObject gameObject, IMushroom parent, Direction direction)
     {
         Mushroom mushroom = gameObject.AddComponent<Mushroom>();
-        mushroom._gameObject = gameObject;
-        mushroom._parent = parent;
-        mushroom._direction = direction;
+        mushroom.GameObject = gameObject;
+        mushroom.Parent = parent;
+        mushroom.Direction = direction;
         return mushroom;
     }
 
@@ -36,18 +36,18 @@ public class Mushroom : MonoBehaviour, IMushroom
     {
         if (_state == MushroomState.Tip)
         {
-            Vector3 parentPosition = _parent == null ? new Vector3(0, 0, 0) : _parent._gameObject.transform.position;
-            Vector3 currPosition = _gameObject.transform.position;
+            Vector3 parentPosition = Parent == null ? new Vector3(0, 0, 0) : Parent.GameObject.transform.position;
+            Vector3 currPosition = GameObject.transform.position;
             Vector3 direction = currPosition - parentPosition;
             
             float angle = Helper.SampleFromNormalDistribution(56, 17);
             // Decide if we change direction
             if (Helper.Rnd.NextDouble() < 0.2f)
-                _direction = DirectionMethods.GetRandomDirection(_direction);
-            Quaternion rotation = Quaternion.AngleAxis(angle, DirectionMethods.ToVector3(_direction));
+                Direction = DirectionMethods.GetRandomPossibleDirection(Direction);
+            Quaternion rotation = Quaternion.AngleAxis(angle, DirectionMethods.ToVector3(Direction));
 
             Vector3 childPosition = currPosition + rotation * direction;
-            Mushroom child = MushroomCore.SpawnMushroom(childPosition, this, _direction);
+            Mushroom child = MushroomCore.SpawnMushroom(childPosition, this, Direction);
             _state = MushroomState.Hyphal;
         }
     }
