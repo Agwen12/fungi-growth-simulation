@@ -115,7 +115,7 @@ public static class DirectionMethods
     }
 
 
-    public static bool IsSquare(Vector3 vector) {
+    private static bool IsSquare(Vector3 vector) {
         return vector.sqrMagnitude == 1;
     }
 
@@ -123,7 +123,7 @@ public static class DirectionMethods
         Vector3 vector = ToVector3(direction);
         if(DirectionMethods.IsSquare(vector))
         {
-            int[] units = { Helper.Rnd.Next(0, 1), Helper.Rnd.Next(0, 1) };
+            int[] units = {1 - 2 * Helper.Rnd.Next(0, 1), 1 - 2 * Helper.Rnd.Next(0, 1) };
             int unitIdx = 0;
             Vector3 branch1 = new Vector3(1, 1, 1);
             Vector3 branch2 = new Vector3(1, 1, 1);
