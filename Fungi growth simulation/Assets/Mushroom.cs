@@ -12,16 +12,16 @@ public class Mushroom : MonoBehaviour, IMushroom
 {
     private MushroomState _state = MushroomState.Tip;
 
-    public GameObject _gameObject { get; set; }
-    public IMushroom _parent { get; set; }
-    public Direction _direction { get; set; }
+    public GameObject GameObject { get; set; }
+    public IMushroom Parent { get; set; }
+    public Direction Direction { get; set; }
 
     public static Mushroom CreateComponent(GameObject gameObject, IMushroom parent, Direction direction)
     {
         Mushroom mushroom = gameObject.AddComponent<Mushroom>();
-        mushroom._gameObject = gameObject;
-        mushroom._parent = parent;
-        mushroom._direction = direction;
+        mushroom.GameObject = gameObject;
+        mushroom.Parent = parent;
+        mushroom.Direction = direction;
         return mushroom;
     }
 
@@ -36,8 +36,8 @@ public class Mushroom : MonoBehaviour, IMushroom
     {
         if (_state == MushroomState.Tip)
         {
-            Vector3 parentPosition = _parent == null ? new Vector3(0, 0, 0) : _parent._gameObject.transform.position;
-            Vector3 currPosition = _gameObject.transform.position;
+            Vector3 parentPosition = Parent == null ? new Vector3(0, 0, 0) : Parent.GameObject.transform.position;
+            Vector3 currPosition = GameObject.transform.position;
             Vector3 direction = currPosition - parentPosition;
 
             if (Helper.Rnd.NextDouble() < 0.03f)
@@ -64,6 +64,7 @@ public class Mushroom : MonoBehaviour, IMushroom
                 Mushroom child = MushroomCore.SpawnMushroom(childPosition, this, _direction);
                 
             }
+
             _state = MushroomState.Hyphal;
         }
     }

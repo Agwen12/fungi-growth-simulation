@@ -6,8 +6,8 @@ public class MushroomCore : MonoBehaviour, IMushroom
 {
     private static LinkedList<Mushroom> _mushrooms = new LinkedList<Mushroom>();
 
-    public GameObject _gameObject { get; set; }
-    public IMushroom _parent { get; set; }
+    public GameObject GameObject { get; set; }
+    public IMushroom Parent { get; set; }
 
     public static GameObject MushroomPrefab;
     public int InitChildrenCount;
@@ -17,10 +17,10 @@ public class MushroomCore : MonoBehaviour, IMushroom
     // Start is called before the first frame update
     void Start()
     {
-        _parent = null;
+        Parent = null;
         MushroomPrefab = (GameObject)Instantiate(Resources.Load("Mushroom"));
-        _gameObject = GameObject.Find("MushroomCore");
-        _gameObject.transform.position = InitPosition;
+        GameObject = GameObject.Find("MushroomCore");
+        GameObject.transform.position = InitPosition;
         for (int i = 0; i < InitChildrenCount; i++)
             SpawnMushroom(Random.onUnitSphere * InitRadius, (IMushroom)this, DirectionMethods.GetRandomDirection());
     }
