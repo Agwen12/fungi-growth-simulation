@@ -40,7 +40,7 @@ public class Mushroom : MonoBehaviour, IMushroom
             Vector3 currPosition = GameObject.transform.position;
             Vector3 direction = currPosition - parentPosition;
 
-            if (Helper.Rnd.NextDouble() < 0.03f)
+            if (Helper.Rnd.NextDouble() < Config.BranchingFactor)
             { //Branch
                 Vector3[] branchDirections = DirectionMethods.GetBranchDirection(Direction);
                 Vector3 childPosition1 = currPosition + branchDirections[0].normalized;
@@ -53,7 +53,7 @@ public class Mushroom : MonoBehaviour, IMushroom
               //Standart growth
                 float angle = Helper.SampleFromNormalDistribution(56, 17);
                 // Decide if we change direction
-                if (Helper.Rnd.NextDouble() < 0.04f)
+                if (Helper.Rnd.NextDouble() < Config.ChangeDirectionProbability)
                     Direction = DirectionMethods.GetRandomPossibleDirection(Direction);
                 Quaternion rotation = Quaternion.AngleAxis(angle, DirectionMethods.ToVector3(Direction));
 
