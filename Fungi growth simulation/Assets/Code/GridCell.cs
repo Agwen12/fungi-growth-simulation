@@ -17,14 +17,17 @@ public class GridCell
 
     public GridCell(int x, int y, int z)
     {
+        _state = GridState.EMPTY;
         _x = x;
         _y = y;
         _z = z;
-        Vector3 position;
-        if (z % 2 == 0)
-            position = new Vector3(_x * _prefabSize.x, _y * _prefabSize.y, _z * _prefabSize.z);
-        else
-            position = new Vector3((_x + 0.5f) * _prefabSize.x, (_y + 0.5f) * _prefabSize.y, _z * _prefabSize.z);
+        Vector3 position = new Vector3(_x * _prefabSize.x, _y * _prefabSize.y, _z * _prefabSize.z);
+        if (z % 2 == 1)
+        {
+            position += new Vector3(Config.LayersOffsetsPerc[0] * _prefabSize.x,
+                                    Config.LayersOffsetsPerc[1] * _prefabSize.y,
+                                    Config.LayersOffsetsPerc[2] * _prefabSize.z);
+        }
         _gameObject = GameObject.Instantiate(_prefab, position, Quaternion.identity);
     }
 
@@ -40,19 +43,9 @@ public class GridCell
 
     public void Update()
     {
-        switch (_state)
-        {
-            case GridState.ACTIVE_HYPHAL:
-                // set color 1
-                break;
-            case GridState.INACTIVE_HYPHAL:
-                // set color 2
-                break;
-            case GridState.TIP:
-                // set color 3
-                break;
-            default:
-                break;
-        }
+        _gameObject.GetComponent<Renderer>()
+                   .material
+                   .SetColor("_Color", GridStateMethods.toColor(_state));
+        /*_gameObject.SetActive(_state != GridState.EMPTY);*/
     }
 }

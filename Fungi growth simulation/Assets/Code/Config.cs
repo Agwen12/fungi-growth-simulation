@@ -10,6 +10,7 @@ public class Config : MonoBehaviour
     public static float InitialChildrenPerc = 0.5f;
     public static int GridSize = 10;
     public static int[] MushroomCorePosition = { GridSize / 2, GridSize / 2, GridSize / 2 };
+    public static float[] LayersOffsetsPerc = new float[] { 0.4f, 0.4f, 0f };
 
     // Start is called before the first frame update
     void Start()
