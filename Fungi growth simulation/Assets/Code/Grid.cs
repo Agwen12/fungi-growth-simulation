@@ -9,6 +9,8 @@ public class Grid
 
     public Grid()
     {
+        _gridCells = new GridCellsWrapper(Config.GridSize, Config.GridSize, Config.GridSize);
+
         for (int x = 0; x < Config.GridSize; x++)
             for (int y = 0; y < Config.GridSize; y++)
                 for (int z = 0; z < Config.GridSize; z++)
@@ -16,7 +18,7 @@ public class Grid
 
         for (int x = 0; x < Config.GridSize; x++)      
             for (int y = 0; y < Config.GridSize; y++)        
-                for (int z = 0; y < Config.GridSize; z++)
+                for (int z = 0; z < Config.GridSize; z++)
                     SetNeighbors(x, y, z);
 
         InitializeMushroomCore();
@@ -58,5 +60,13 @@ public class Grid
         return (0 <= position[0] && position[0] < Config.GridSize && 
                 0 <= position[1] && position[1] < Config.GridSize && 
                 0 <= position[2] && position[2] < Config.GridSize);
+    }
+
+    public void Update()
+    {
+        for (int x = 0; x < Config.GridSize; x++)
+            for (int y = 0; y < Config.GridSize; y++)
+                for (int z = 0; z < Config.GridSize; z++)
+                    _gridCells[x, y, z].Update();
     }
 }

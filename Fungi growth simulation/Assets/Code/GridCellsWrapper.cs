@@ -6,6 +6,11 @@ public class GridCellsWrapper
 {
     private GridCell[,,] _gridCells;
 
+    public GridCellsWrapper(int xDim, int yDim, int zDim)
+    {
+        _gridCells = new GridCell[xDim, yDim, zDim];
+    }
+
     public GridCell this[int x, int y, int z]
     {
         get => _gridCells[x, y, z];
