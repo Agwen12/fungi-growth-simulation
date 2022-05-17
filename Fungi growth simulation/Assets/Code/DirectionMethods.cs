@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System;
+using System.Linq;
 using UnityEngine;
 
 
@@ -29,15 +29,17 @@ public static class DirectionMethods
         return _directionToOffsets[direction];
     }
 
-    public static int[] GetNewPosition(int[] currPosition, Direction direction)
+    public static int[] GetOffsetPosition(int[] currPosition, Direction direction)
     {
-        int currLayer = currPosition[2] % 2;
-        int[,] offsets = GetOffsets(direction); // No entiendo porque el function?
+        int currLayerParity = currPosition[2] % 2;
+        int[,] offsets = GetOffsets(direction); // No entiendo porque el function? // jeste? w Polsce pisz po polsku, wrapper na dicta
         int[] offset = Enumerable.Range(0, offsets.GetLength(1))
-                                 .Select(x => offsets[currLayer, x])
+                                 .Select(x => offsets[currLayerParity, x])
                                  .ToArray();
-        int[] newPosition = { currPosition[0] + offset[0], currPosition[1] + offset[1], currPosition[2] + offset[2] };
-        return newPosition;
+        int[] offsetPosition = { currPosition[0] + offset[0], 
+                                 currPosition[1] + offset[1], 
+                                 currPosition[2] + offset[2] };
+        return offsetPosition;
     }
 
 /*    public static Direction GetRandomDirection()

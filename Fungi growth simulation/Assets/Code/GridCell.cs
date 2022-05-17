@@ -8,32 +8,25 @@ public class GridCell : MonoBehaviour
     private Dictionary<Direction, GridCell> _neighbors = new Dictionary<Direction, GridCell>();
     private GridState _state;
     private float _nutritionLevel;
-    private int x;
-    private int y;
-    private int z;
+    private int _x;
+    private int _y;
+    private int _z;
 
     public GridCell(int x, int y, int z)
     {
-        // foreach (Direction direction in Enum.GetValues(typeof(Direction)))
-        // {
-        //     Vector3 directionVector3 = DirectionMethods.ToVector3(direction);
-        //     int[] neighborPosition = { x + (int)directionVector3[0], 
-        //                                y + (int)directionVector3[1], 
-        //                                z + (int)directionVector3[2] };
-        //     if (Grid.IsPositionValid(neighborPosition))
-        //         _neighbors.Add(direction, )
-        // }
+        _x = x;
+        _y = y;
+        _z = z;
     }
 
-    public AddNeighbors(GridCell[,,] gridCells)
+    public void AddNeighbor(Direction direction, GridCell neighbor)
     {
-        foreach (Direction direction in Enum.GetNames<Direction>)
-        {
-            // TODO make sure it compiles, cuz I'm not sure 
-            int[] newPos = DirectionMethods.GetNewPosition({x, y, z}, direction);
-            if (newPos[0] >= 0 && newPos[1] >= 0 && newPos[2] >= 0);
-            _neighbors.Add(direction, gridCells[newPos[0], newPos[1], newPos[2]]);
-        }
+        _neighbors.Add(direction, neighbor);
+    }
+
+    public void SetState(GridState state)
+    {
+        _state = state;
     }
 
     // Start is called before the first frame update
