@@ -25,7 +25,7 @@ public class GridCell : MonoBehaviour
         // }
     }
 
-    public AddNeighbors(int x, int y, int z, GridCell[,,] gridCells)
+    public AddNeighbors(GridCell[,,] gridCells)
     {
         foreach (Direction direction in Enum.GetNames<Direction>)
         {
