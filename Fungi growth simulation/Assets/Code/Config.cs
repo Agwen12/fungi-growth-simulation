@@ -9,8 +9,7 @@ public class Config : MonoBehaviour
     public static int RandomSeed = 2137;
     public static float InitialChildrenPerc = 0.5f;
     public static int GridSize = 10;
-    public static int[] MushroomCorePosition = { GridSize / 2, GridSize / 2, GridSize / 2 };
-    
+    public static int[] MushroomCorePosition = { GridSize / 2, GridSize / 2, GridSize / 2 }; 
     public static float delta_x = 1e-6;
     public static float delta_t = 1;
     public static float si0 = 1e-06;
@@ -30,6 +29,7 @@ public class Config : MonoBehaviour
     public static float c4 = 1e-11;
     public static float c5 = 1e-11;
 
+    public static float[] LayersOffsetsPerc = new float[] { 0.4f, 0.4f, 0f };
 
     // Start is called before the first frame update
     void Start()

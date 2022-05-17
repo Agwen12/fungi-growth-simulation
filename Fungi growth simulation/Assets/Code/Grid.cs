@@ -49,10 +49,11 @@ public class Grid
             {
                 int[] neighborPosition = DirectionMethods.GetOffsetPosition(Config.MushroomCorePosition, direction);
                 if (IsPositionValid(neighborPosition))
-                    _gridCells[neighborPosition].SetState(GridState.ACTIVE_HYPHAL);
+                    _gridCells[neighborPosition].SetState(GridState.TIP);
             }
             ++i;
         }
+        _gridCells[Config.MushroomCorePosition].SetState(GridState.ACTIVE_HYPHAL);
     }
 
     public static bool IsPositionValid(int[] position)
