@@ -46,6 +46,6 @@ public class GridCell
         _gameObject.GetComponent<Renderer>()
                    .material
                    .SetColor("_Color", GridStateMethods.toColor(_state));
-        /*_gameObject.SetActive(_state != GridState.EMPTY);*/
+        _gameObject.SetActive(_state != GridState.EMPTY);
     }
 }
