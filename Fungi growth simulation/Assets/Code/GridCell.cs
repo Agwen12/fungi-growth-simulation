@@ -8,6 +8,9 @@ public class GridCell : MonoBehaviour
     private Dictionary<Direction, GridCell> _neighbors = new Dictionary<Direction, GridCell>();
     private GridState _state;
     private float _nutritionLevel;
+    private int x;
+    private int y;
+    private int z;
 
     public GridCell(int x, int y, int z)
     {
@@ -20,6 +23,17 @@ public class GridCell : MonoBehaviour
         //     if (Grid.IsPositionValid(neighborPosition))
         //         _neighbors.Add(direction, )
         // }
+    }
+
+    public AddNeighbors(int x, int y, int z, GridCell[,,] gridCells)
+    {
+        foreach (Direction direction in Enum.GetNames<Direction>)
+        {
+            // TODO make sure it compiles, cuz I'm not sure 
+            int[] newPos = DirectionMethods.GetNewPosition({x, y, z}, direction);
+            if (newPos[0] >= 0 && newPos[1] >= 0 && newPos[2] >= 0);
+            _neighbors.Add(direction, gridCells[newPos[0], newPos[1], newPos[2]]);
+        }
     }
 
     // Start is called before the first frame update

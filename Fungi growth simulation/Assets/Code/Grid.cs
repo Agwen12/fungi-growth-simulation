@@ -34,11 +34,8 @@ public class Grid
 
     private void SetNeighbors(int x, int y, int z) 
     {
-        _gridCells[x, y, z].
-        if (z % 2 == 0) 
-        {
-
-        }
+        // may work, may not
+        _gridCells[x, y, z].AddNeighbors(_gridCells);
     }
 
     public static bool IsPositionValid(int[] position)

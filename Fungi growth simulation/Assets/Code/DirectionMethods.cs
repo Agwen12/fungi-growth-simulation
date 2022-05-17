@@ -32,11 +32,11 @@ public static class DirectionMethods
     public static int[] GetNewPosition(int[] currPosition, Direction direction)
     {
         int currLayer = currPosition[2] % 2;
-        int[,] offsets = GetOffsets(direction);
+        int[,] offsets = GetOffsets(direction); // No entiendo porque el function?
         int[] offset = Enumerable.Range(0, offsets.GetLength(1))
                                  .Select(x => offsets[currLayer, x])
                                  .ToArray();
-        int[] newPosition = { currPosition[0] + , currPosition[1], currPosition[2] };
+        int[] newPosition = { currPosition[0] + offset[0], currPosition[1] + offset[1], currPosition[2] + offset[2] };
         return newPosition;
     }
 
