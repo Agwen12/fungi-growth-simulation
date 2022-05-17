@@ -32,7 +32,7 @@ public static class DirectionMethods
     public static int[] GetOffsetPosition(int[] currPosition, Direction direction)
     {
         int currLayerParity = currPosition[2] % 2;
-        int[,] offsets = GetOffsets(direction); // No entiendo porque el function? // jeste? w Polsce pisz po polsku, wrapper na dicta
+        int[,] offsets = GetOffsets(direction); 
         int[] offset = Enumerable.Range(0, offsets.GetLength(1))
                                  .Select(x => offsets[currLayerParity, x])
                                  .ToArray();
@@ -40,6 +40,16 @@ public static class DirectionMethods
                                  currPosition[1] + offset[1], 
                                  currPosition[2] + offset[2] };
         return offsetPosition;
+    }
+
+
+    // TODO
+    // we need a function that give a Direction returns another Direction that is acute to a given one
+
+    // placeholder
+    public static Direction GetAcute(Direction direction)
+    {
+        return direction;
     }
 
 /*    public static Direction GetRandomDirection()
