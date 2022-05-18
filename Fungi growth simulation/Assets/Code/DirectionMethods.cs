@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-
 public static class DirectionMethods
 {
     private static Dictionary<Direction, int[,]> _directionToOffsets = new Dictionary<Direction, int[,]>()
@@ -22,6 +21,23 @@ public static class DirectionMethods
         { Direction.DOWN_FORWARD_LEFT, new int[,] { { -1, 0, -1 }, { 0, 1, -1 } } },
         { Direction.DOWN_BACK_RIGHT, new int[,] { { 0, -1, -1 }, { 1, 0, -1 } } },
         { Direction.DOWN_BACK_LEFT, new int[,] { { -1, -1, -1 }, { 0, 0, -1 } } },
+    };
+    private static Dictionary<Direction, Direction[]> _directionToAcute = new Dictionary<Direction, Direction[]>()
+    {
+        { Direction.FORWARD, new Direction[] { Direction.UP_FORWARD_RIGHT, Direction.UP_FORWARD_RIGHT, Direction.UP_FORWARD_RIGHT, Direction.UP_FORWARD_RIGHT } },
+        { Direction.BACK, new Direction[] { Direction.UP_BACK_RIGHT, Direction.UP_BACK_RIGHT, Direction.UP_BACK_RIGHT, Direction.UP_BACK_RIGHT } },
+        { Direction.LEFT, new Direction[] { Direction.DOWN_BACK_LEFT, Direction.DOWN_BACK_LEFT, Direction.DOWN_BACK_LEFT, Direction.DOWN_BACK_LEFT } },
+        { Direction.RIGHT, new Direction[] { Direction.DOWN_BACK_RIGHT, Direction.DOWN_BACK_RIGHT, Direction.DOWN_BACK_RIGHT, Direction.DOWN_BACK_RIGHT } },
+        { Direction.UP, new Direction[] { Direction.UP_BACK_RIGHT, Direction.UP_BACK_RIGHT, Direction.UP_BACK_RIGHT, Direction.UP_BACK_RIGHT } },
+        { Direction.DOWN, new Direction[] { Direction.DOWN_BACK_RIGHT, Direction.DOWN_BACK_RIGHT, Direction.DOWN_BACK_RIGHT, Direction.DOWN_BACK_RIGHT } },
+        { Direction.UP_FORWARD_RIGHT, new Direction[] { Direction.RIGHT, Direction.UP, Direction.FORWARD, Direction.UP_FORWARD_LEFT, Direction.DOWN_FORWARD_RIGHT, Direction.UP_BACK_RIGHT } },
+        { Direction.UP_FORWARD_LEFT, new Direction[] { Direction.LEFT, Direction.UP, Direction.FORWARD, Direction.DOWN_BACK_RIGHT, Direction.DOWN_FORWARD_RIGHT, Direction.UP_BACK_RIGHT } },
+        { Direction.UP_BACK_RIGHT, new Direction[] { Direction.RIGHT, Direction.UP, Direction.BACK, Direction.UP_FORWARD_LEFT, Direction.DOWN_FORWARD_RIGHT, Direction.DOWN_FORWARD_LEFT } },
+        { Direction.UP_BACK_LEFT, new Direction[] { Direction.LEFT, Direction.UP, Direction.BACK, Direction.DOWN_BACK_RIGHT, Direction.DOWN_FORWARD_RIGHT, Direction.DOWN_FORWARD_LEFT } },
+        { Direction.DOWN_FORWARD_RIGHT, new Direction[] { Direction.RIGHT, Direction.DOWN, Direction.FORWARD, Direction.UP_FORWARD_LEFT, Direction.UP_BACK_LEFT, Direction.UP_BACK_RIGHT } },
+        { Direction.DOWN_FORWARD_LEFT, new Direction[] { Direction.LEFT, Direction.DOWN, Direction.FORWARD, Direction.DOWN_BACK_RIGHT, Direction.UP_BACK_LEFT, Direction.UP_BACK_RIGHT } },
+        { Direction.DOWN_BACK_RIGHT, new Direction[] { Direction.RIGHT, Direction.DOWN, Direction.BACK, Direction.UP_FORWARD_LEFT, Direction.UP_BACK_LEFT, Direction.DOWN_FORWARD_LEFT } },
+        { Direction.DOWN_BACK_LEFT, new Direction[] { Direction.LEFT, Direction.DOWN, Direction.BACK, Direction.DOWN_BACK_RIGHT, Direction.UP_BACK_LEFT, Direction.DOWN_FORWARD_LEFT } },
     };
 
     private static int[,] GetOffsets(Direction direction)
@@ -42,14 +58,10 @@ public static class DirectionMethods
         return offsetPosition;
     }
 
-
-    // TODO
-    // we need a function that give a Direction returns another Direction that is acute to a given one
-
-    // placeholder
     public static Direction GetAcute(Direction direction)
     {
-        return direction;
+        Direction[] acuteDirections = _directionToAcute[direction];
+        return acuteDirections[Helper.Rnd.Next(acuteDirections.Length)];
     }
 
 /*    public static Direction GetRandomDirection()

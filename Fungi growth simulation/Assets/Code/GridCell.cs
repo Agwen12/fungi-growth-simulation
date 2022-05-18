@@ -88,7 +88,6 @@ public class GridCell
     {
         foreach (KeyValuePair<Direction, GridCell> entry in _neighbors)
         {
-
             if ((entry.Value._state == GridState.ACTIVE_HYPHAL ||
                 entry.Value._state == GridState.INACTIVE_HYPHAL ||
                 entry.Value._state == GridState.TIP) )
