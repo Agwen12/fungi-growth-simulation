@@ -2,17 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-using Direction;
-
 
 public class GridCell
 {
     private Dictionary<Direction, GridCell> _neighbors = new Dictionary<Direction, GridCell>();
     private GridState _state;
     private Direction _growthDirection;
-    public float _nutritionLevel; // perhabs consider using a getter
+    public double _nutritionLevel; // perhabs consider using a getter
 
-    public float _externalNutritionLevel;
+    public double _externalNutritionLevel;
 
     private int _x;
     private int _y;
@@ -49,10 +47,10 @@ public class GridCell
 
     private void Move()
     {
-        float dtdx = Config.delta_t / Config.delta_x;
-        float sameDirection = _nutritionLevel* (Config.v *dtdx   + Config.Dp * dtdx / Config.delta_x);
-        float acuteAngle = Config.Dp * _nutritionLevel * dtdx / Config.delta_x;
-        float randomNumber = Helper.Rnd.NextDouble();
+        double dtdx = Config.delta_t / Config.delta_x;
+        double sameDirection = _nutritionLevel* (Config.v *dtdx   + Config.Dp * dtdx / Config.delta_x);
+        double acuteAngle = Config.Dp * _nutritionLevel * dtdx / Config.delta_x;
+        double randomNumber = Helper.Rnd.NextDouble();
         if ( randomNumber <= sameDirection) 
         {
             _state = GridState.ACTIVE_HYPHAL;
@@ -60,7 +58,7 @@ public class GridCell
             _neighbors[_growthDirection].SetState(GridState.TIP);
             this.SetState(GridState.ACTIVE_HYPHAL);
         }
-        else if (sameDirection < randomNumber < sameDirection + acuteAngle)
+        else if (sameDirection < randomNumber && randomNumber < sameDirection + acuteAngle)
         {
             // move 
             Direction newGrowthDirection = DirectionMethods.GetAcute(_growthDirection);
@@ -77,8 +75,8 @@ public class GridCell
 
     private void Branch()
     {
-        float branchingProbabilty = Config.b * _nutritionLevel * Config.delta_t;
-        if (Helper.Rnd.NextDouble <= branchingProbabilty) 
+        double branchingProbabilty = Config.b * _nutritionLevel * Config.delta_t;
+        if (Helper.Rnd.NextDouble() <= branchingProbabilty) 
         {
             Direction newGrowthDirection = DirectionMethods.GetAcute(_growthDirection);
             _neighbors[newGrowthDirection]._growthDirection = newGrowthDirection;
@@ -91,12 +89,12 @@ public class GridCell
         foreach (KeyValuePair<Direction, GridCell> entry in _neighbors)
         {
 
-            if ((entry.Value.GetType() == GridState.ACTIVE_HYPHAL ||
-                entry.Value.GetType() == GridState.INACTIVE_HYPHAL ||
-                entry.Value.GetType() == GridState.TIP) )
+            if ((entry.Value._state == GridState.ACTIVE_HYPHAL ||
+                entry.Value._state == GridState.INACTIVE_HYPHAL ||
+                entry.Value._state == GridState.TIP) )
                 {
                     // nutrines k ====> j
-                    float ammount = Config.ChangeDirectionProbability * Config.delta_t *
+                    double ammount = Config.ChangeDirectionProbability * Config.delta_t *
                      (entry.Value._nutritionLevel - _nutritionLevel) / (Config.delta_x * Config.delta_x);
 
                     _nutritionLevel += ammount;
@@ -109,11 +107,10 @@ public class GridCell
     {
         if(_externalNutritionLevel > 0) 
         {
-            float ammount = _externalNutritionLevel * _nutritionLevel * Config.delta_t;
-            _nutritionLevel += Confing.c1 * ammount;
+            double ammount = _externalNutritionLevel * _nutritionLevel * Config.delta_t;
+            _nutritionLevel += Config.c1 * ammount;
             _externalNutritionLevel -= Config.c3 * ammount;
         }
-        
     }
 
     public void Update()
@@ -141,6 +138,5 @@ public class GridCell
                    .material
                    .SetColor("_Color", GridStateMethods.toColor(_state));
         _gameObject.SetActive(_state != GridState.EMPTY);
-
     }
 }
