@@ -50,6 +50,7 @@ public class Grid
                 int[] neighborPosition = DirectionMethods.GetOffsetPosition(Config.MushroomCorePosition, direction);
                 if (IsPositionValid(neighborPosition))
                     _gridCells[neighborPosition].SetState(GridState.TIP);
+                _gridCells[neighborPosition]._growthDirection = direction;
             }
             ++i;
         }

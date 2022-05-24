@@ -7,10 +7,10 @@ public class GridCell
 {
     private Dictionary<Direction, GridCell> _neighbors = new Dictionary<Direction, GridCell>();
     private GridState _state;
-    private Direction _growthDirection;
-    public double _nutritionLevel; // perhabs consider using a getter
+    public Direction _growthDirection;
+    public double _nutritionLevel = Config.si0;
 
-    public double _externalNutritionLevel;
+    public double _externalNutritionLevel = Config.se0;
 
     private int _x;
     private int _y;
@@ -48,24 +48,32 @@ public class GridCell
     private void Move()
     {
         double dtdx = Config.delta_t / Config.delta_x;
-        double sameDirection = _nutritionLevel* (Config.v *dtdx   + Config.Dp * dtdx / Config.delta_x);
+        double sameDirection = _nutritionLevel * (Config.v * dtdx + Config.Dp * dtdx / Config.delta_x);
         double acuteAngle = Config.Dp * _nutritionLevel * dtdx / Config.delta_x;
         double randomNumber = Helper.Rnd.NextDouble();
-        if ( randomNumber <= sameDirection) 
+        /*Debug.Log("SAME DIR " + sameDirection + " MOVE " + acuteAngle);*/
+        if (randomNumber <= sameDirection) 
         {
-            _state = GridState.ACTIVE_HYPHAL;
-            _neighbors[_growthDirection]._growthDirection = _growthDirection;
-            _neighbors[_growthDirection].SetState(GridState.TIP);
-            this.SetState(GridState.ACTIVE_HYPHAL);
+            if (_neighbors.ContainsKey(_growthDirection))
+            {
+                _state = GridState.ACTIVE_HYPHAL;
+                _neighbors[_growthDirection]._growthDirection = _growthDirection;
+                _neighbors[_growthDirection].SetState(GridState.TIP);
+                this.SetState(GridState.ACTIVE_HYPHAL);
+            }
         }
         else if (sameDirection < randomNumber && randomNumber < sameDirection + acuteAngle)
         {
             // move 
             Direction newGrowthDirection = DirectionMethods.GetAcute(_growthDirection);
-            _state = GridState.ACTIVE_HYPHAL;
-            _neighbors[newGrowthDirection]._growthDirection = _growthDirection;
-            _neighbors[newGrowthDirection].SetState(GridState.TIP);
-            this.SetState(GridState.ACTIVE_HYPHAL);
+            if (_neighbors.ContainsKey(newGrowthDirection))
+            {
+                _state = GridState.ACTIVE_HYPHAL;
+                _neighbors[newGrowthDirection]._growthDirection = _growthDirection;
+                _neighbors[newGrowthDirection].SetState(GridState.TIP);
+                this.SetState(GridState.ACTIVE_HYPHAL);
+            }
+
         } 
         else 
         {
@@ -76,6 +84,7 @@ public class GridCell
     private void Branch()
     {
         double branchingProbabilty = Config.b * _nutritionLevel * Config.delta_t;
+        Debug.Log("BRANCHING " + branchingProbabilty);
         if (Helper.Rnd.NextDouble() <= branchingProbabilty) 
         {
             Direction newGrowthDirection = DirectionMethods.GetAcute(_growthDirection);
@@ -93,8 +102,8 @@ public class GridCell
                 entry.Value._state == GridState.TIP) )
                 {
                     // nutrines k ====> j
-                    double ammount = Config.ChangeDirectionProbability * Config.delta_t *
-                     (entry.Value._nutritionLevel - _nutritionLevel) / (Config.delta_x * Config.delta_x);
+                    double ammount = Config.Da * Config.delta_t *
+                                     (entry.Value._nutritionLevel - _nutritionLevel) / (Config.delta_x * Config.delta_x);
 
                     _nutritionLevel += ammount;
                     entry.Value._nutritionLevel -= ammount;
@@ -104,7 +113,7 @@ public class GridCell
 
     private void Uptake()
     {
-        if(_externalNutritionLevel > 0) 
+        if (_externalNutritionLevel > 0) 
         {
             double ammount = _externalNutritionLevel * _nutritionLevel * Config.delta_t;
             _nutritionLevel += Config.c1 * ammount;
@@ -114,7 +123,6 @@ public class GridCell
 
     public void Update()
     {
-
         switch (_state)
         {
             case GridState.ACTIVE_HYPHAL:
@@ -137,5 +145,7 @@ public class GridCell
                    .material
                    .SetColor("_Color", GridStateMethods.toColor(_state));
         _gameObject.SetActive(_state != GridState.EMPTY);
+/*        if (_state != GridState.EMPTY)
+            Debug.Log("ENERGIA " + _nutritionLevel);*/
     }
 }
