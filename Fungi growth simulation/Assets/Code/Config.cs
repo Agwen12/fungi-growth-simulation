@@ -6,7 +6,7 @@ public class Config : MonoBehaviour
 {
     public static int RandomSeed = 2137;
     public static float InitialChildrenPerc = 1.0f;
-    public static int GridSize = 5;
+    public static int GridSize = 25;
     public static int[] MushroomCorePosition = { GridSize / 2, GridSize / 2, GridSize / 2 }; 
     public static double delta_x = 1e-01;
     public static double delta_t = 1e-03;
@@ -30,6 +30,8 @@ public class Config : MonoBehaviour
     public static float[] LayersOffsetsPerc = new float[] { 0.5f, 0.5f, 0.7f };
 
     public static int activeHyphaLifespan = 500;
+
+    public static string LogDirPath = "log";
 
     // Start is called before the first frame update
     void Start()

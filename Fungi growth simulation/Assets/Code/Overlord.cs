@@ -10,6 +10,7 @@ public class Overlord : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Statistics.Init();
         _grid = new Grid();
     }
 

@@ -78,7 +78,6 @@ public class GridCell
                 _neighbors[newGrowthDirection].SetState(GridState.TIP);
                 this.SetState(GridState.ACTIVE_HYPHAL);
             }
-
         } 
         else 
         {
@@ -93,8 +92,11 @@ public class GridCell
         if (Helper.Rnd.NextDouble() <= branchingProbabilty) 
         {
             Direction newGrowthDirection = DirectionMethods.GetAcute(_growthDirection);
-            _neighbors[newGrowthDirection]._growthDirection = newGrowthDirection;
-            _neighbors[newGrowthDirection].SetState(GridState.TIP);
+            if (_neighbors.ContainsKey(newGrowthDirection))
+            {
+                _neighbors[newGrowthDirection]._growthDirection = newGrowthDirection;
+                _neighbors[newGrowthDirection].SetState(GridState.TIP);
+            }
         }
     }
 
@@ -135,7 +137,10 @@ public class GridCell
 
     public void Update()
     {
-        _state = GridState.INACTIVE_HYPHAL;
+        Statistics.IncreaseInternalNutrition(_nutritionLevel);
+        Statistics.IncreaseExternalNutrition(_externalNutritionLevel);
+        Statistics.IncreaseHyphaCount(_state);
+
         switch (_state)
         {
             case GridState.ACTIVE_HYPHAL:
