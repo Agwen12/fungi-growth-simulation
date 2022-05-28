@@ -18,6 +18,7 @@ public class GridCell
     private GameObject _gameObject;
     private static GameObject _prefab = GameObject.Instantiate(Resources.Load("GridCell")) as GameObject;
     private static Vector3 _prefabSize = (_prefab.GetComponent(typeof(Renderer)) as Renderer).bounds.size;
+    private int _age = 0;
 
     public GridCell(int x, int y, int z)
     {
@@ -26,12 +27,16 @@ public class GridCell
         _y = y;
         _z = z;
         Vector3 position = new Vector3(_x * _prefabSize.x, _y * _prefabSize.y, _z * _prefabSize.z);
+        Vector3 layerOffset = new Vector3(0, 0, Config.LayersOffsetsPerc[2] * _prefabSize.z * (-Config.LayersOffsetsPerc[2] * _z));
         if (z % 2 == 1)
         {
             position += new Vector3(Config.LayersOffsetsPerc[0] * _prefabSize.x,
                                     Config.LayersOffsetsPerc[1] * _prefabSize.y,
                                     Config.LayersOffsetsPerc[2] * _prefabSize.z);
         }
+        else
+            position += new Vector3(0, 0, Config.LayersOffsetsPerc[2] * _prefabSize.z);
+        position += layerOffset;
         _gameObject = GameObject.Instantiate(_prefab, position, Quaternion.identity);
     }
 
@@ -84,7 +89,7 @@ public class GridCell
     private void Branch()
     {
         double branchingProbabilty = Config.b * _nutritionLevel * Config.delta_t;
-        Debug.Log("BRANCHING " + branchingProbabilty);
+        /*Debug.Log("BRANCHING " + branchingProbabilty);*/
         if (Helper.Rnd.NextDouble() <= branchingProbabilty) 
         {
             Direction newGrowthDirection = DirectionMethods.GetAcute(_growthDirection);
@@ -121,21 +126,28 @@ public class GridCell
         }
     }
 
+    private void GrowOld()
+    {
+        if (_state == GridState.ACTIVE_HYPHAL)
+            if (++_age >= Config.activeHyphaLifespan)
+                _state = GridState.INACTIVE_HYPHAL;
+    }
+
     public void Update()
     {
+        _state = GridState.INACTIVE_HYPHAL;
         switch (_state)
         {
             case GridState.ACTIVE_HYPHAL:
-                // set color 1
                 this.Uptake();
                 this.Branch();
                 this.PassiveSubstanceMovement();
                 break;
             case GridState.INACTIVE_HYPHAL:
-                // set color 2
+                this.Uptake();
+                this.PassiveSubstanceMovement();
                 break;
             case GridState.TIP:
-                // set color 3
                 this.Move();
                 break;
             default:
@@ -145,7 +157,8 @@ public class GridCell
                    .material
                    .SetColor("_Color", GridStateMethods.toColor(_state));
         _gameObject.SetActive(_state != GridState.EMPTY);
-/*        if (_state != GridState.EMPTY)
-            Debug.Log("ENERGIA " + _nutritionLevel);*/
+        GrowOld();
+        /*        if (_state != GridState.EMPTY)
+                    Debug.Log("ENERGIA " + _nutritionLevel);*/
     }
 }
