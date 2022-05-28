@@ -9,6 +9,7 @@ public class GridCell
     private GridState _state;
     public Direction _growthDirection;
     public double _nutritionLevel = Config.si0;
+    private static double _maxNutritionLevel = 0;
 
     public double _externalNutritionLevel = Config.se0;
 
@@ -128,6 +129,20 @@ public class GridCell
         }
     }
 
+    private void AdjustColor()
+    {
+        float H, S, V;
+        Color colorBase = GridStateMethods.toColor(_state);
+        Color.RGBToHSV(colorBase, out H, out S, out V);
+        V = Math.Min((float)(_nutritionLevel / _maxNutritionLevel), Config.MinCellColorV);
+        Color color = Color.HSVToRGB(H, S, V);
+
+        _gameObject.GetComponent<Renderer>()
+           .material
+           .SetColor("_Color", color);
+        _gameObject.SetActive(_state != GridState.EMPTY);
+    }
+
     private void GrowOld()
     {
         if (_state == GridState.ACTIVE_HYPHAL)
@@ -140,6 +155,11 @@ public class GridCell
         Statistics.IncreaseInternalNutrition(_nutritionLevel);
         Statistics.IncreaseExternalNutrition(_externalNutritionLevel);
         Statistics.IncreaseHyphaCount(_state);
+
+        if (_nutritionLevel > _maxNutritionLevel)
+            _maxNutritionLevel = _nutritionLevel;
+
+        AdjustColor();
 
         switch (_state)
         {
@@ -158,12 +178,7 @@ public class GridCell
             default:
                 break;
         }
-        _gameObject.GetComponent<Renderer>()
-                   .material
-                   .SetColor("_Color", GridStateMethods.toColor(_state));
-        _gameObject.SetActive(_state != GridState.EMPTY);
+
         GrowOld();
-        /*        if (_state != GridState.EMPTY)
-                    Debug.Log("ENERGIA " + _nutritionLevel);*/
     }
 }

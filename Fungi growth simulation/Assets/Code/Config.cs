@@ -32,6 +32,7 @@ public class Config : MonoBehaviour
     public static int activeHyphaLifespan = 500;
 
     public static string LogDirPath = "log";
+    public static float MinCellColorV = 0.33f;
 
     // Start is called before the first frame update
     void Start()
