@@ -27,6 +27,7 @@ public class GridCell
         _x = x;
         _y = y;
         _z = z;
+
         Vector3 position = new Vector3(_x * _prefabSize.x, _y * _prefabSize.y, _z * _prefabSize.z);
         Vector3 layerOffset = new Vector3(0, 0, Config.LayersOffsetsPerc[2] * _prefabSize.z * (-Config.LayersOffsetsPerc[2] * _z));
         if (z % 2 == 1)
@@ -39,6 +40,10 @@ public class GridCell
             position += new Vector3(0, 0, Config.LayersOffsetsPerc[2] * _prefabSize.z);
         position += layerOffset;
         _gameObject = GameObject.Instantiate(_prefab, position, Quaternion.identity);
+
+        Tuple<int, int, int> coordsTuple = new Tuple<int, int, int>(_x, _y, _z);
+        if (Config.AbnormalNutritionSpots.ContainsKey(coordsTuple))
+            _externalNutritionLevel *= Config.AbnormalNutritionSpots[coordsTuple];
     }
 
     public void AddNeighbor(Direction direction, GridCell neighbor)
@@ -140,7 +145,6 @@ public class GridCell
         _gameObject.GetComponent<Renderer>()
            .material
            .SetColor("_Color", color);
-        _gameObject.SetActive(_state != GridState.EMPTY);
     }
 
     private void GrowOld()
@@ -160,6 +164,7 @@ public class GridCell
             _maxNutritionLevel = _nutritionLevel;
 
         AdjustColor();
+        _gameObject.SetActive(_state != GridState.EMPTY);
 
         switch (_state)
         {

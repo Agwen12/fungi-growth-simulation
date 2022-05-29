@@ -70,6 +70,5 @@ public class Grid
             for (int y = 0; y < Config.GridSize; y++)
                 for (int z = 0; z < Config.GridSize; z++)
                     _gridCells[x, y, z].Update();
-        Statistics.IncreaseTime();
     }
 }

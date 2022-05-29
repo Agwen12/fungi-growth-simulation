@@ -18,7 +18,8 @@ public class Overlord : MonoBehaviour
     void Update()
     {
         _grid.Update();
-        _frame++;
+        Statistics.IncreaseTime();
         Debug.Log("FRAME " + _frame);
+        _frame++;
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,6 +34,10 @@ public class Config : MonoBehaviour
 
     public static string LogDirPath = "log";
     public static float MinCellColorV = 0.33f;
+    public static Dictionary<Tuple<int, int, int>, double> AbnormalNutritionSpots = new Dictionary<Tuple<int, int, int>, double>()
+    {
+        { new Tuple<int, int, int>(7, 7, 7), 40.20f },
+    };
 
     // Start is called before the first frame update
     void Start()
