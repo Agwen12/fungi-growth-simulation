@@ -10,6 +10,8 @@ public class GridCell
     public Direction _growthDirection;
     public double _nutritionLevel = Config.si0;
     private static double _maxNutritionLevel = 0;
+    private static double _maxExternalNutritionLevel = FindMaxExternalNutritionLevel();
+    private bool _shouldBeHandled = false;
 
     public double _externalNutritionLevel = Config.se0;
 
@@ -43,7 +45,10 @@ public class GridCell
 
         Tuple<int, int, int> coordsTuple = new Tuple<int, int, int>(_x, _y, _z);
         if (Config.AbnormalNutritionSpots.ContainsKey(coordsTuple))
+        {
             _externalNutritionLevel *= Config.AbnormalNutritionSpots[coordsTuple];
+            _shouldBeHandled = true;
+        }
     }
 
     public void AddNeighbor(Direction direction, GridCell neighbor)
@@ -54,6 +59,16 @@ public class GridCell
     public void SetState(GridState state)
     {
         _state = state;
+    }
+
+    private static double FindMaxExternalNutritionLevel()
+    {
+        double maxScalar = 0;
+
+        foreach (var scalar in Config.AbnormalNutritionSpots.Values)
+            maxScalar = Math.Max(maxScalar, scalar);
+
+        return maxScalar * Config.se0;
     }
 
     private void Move()
@@ -126,9 +141,9 @@ public class GridCell
 
     private void Uptake()
     {
-        if (_externalNutritionLevel > 0) 
+        double ammount = _externalNutritionLevel * _nutritionLevel * Config.delta_t;
+        if (_externalNutritionLevel > Config.c3 * ammount) 
         {
-            double ammount = _externalNutritionLevel * _nutritionLevel * Config.delta_t;
             _nutritionLevel += Config.c1 * ammount;
             _externalNutritionLevel -= Config.c3 * ammount;
         }
@@ -147,6 +162,20 @@ public class GridCell
            .SetColor("_Color", color);
     }
 
+    private void AdjustSize()
+    {
+        Vector3 newSize = _prefab.transform.localScale;
+
+        if (_state == GridState.EMPTY)
+        {
+            float scalar = 0.75f;
+            scalar *= (float)(_externalNutritionLevel / _maxExternalNutritionLevel);
+            newSize *= scalar;
+        }
+
+        _gameObject.transform.localScale = newSize;
+    }
+
     private void GrowOld()
     {
         if (_state == GridState.ACTIVE_HYPHAL)
@@ -160,30 +189,43 @@ public class GridCell
         Statistics.IncreaseExternalNutrition(_externalNutritionLevel);
         Statistics.IncreaseHyphaCount(_state);
 
-        if (_nutritionLevel > _maxNutritionLevel)
-            _maxNutritionLevel = _nutritionLevel;
-
-        AdjustColor();
-        _gameObject.SetActive(_state != GridState.EMPTY);
-
-        switch (_state)
+        if (Overlord.Frame == 0)
         {
-            case GridState.ACTIVE_HYPHAL:
-                this.Uptake();
-                this.Branch();
-                this.PassiveSubstanceMovement();
-                break;
-            case GridState.INACTIVE_HYPHAL:
-                this.Uptake();
-                this.PassiveSubstanceMovement();
-                break;
-            case GridState.TIP:
-                this.Move();
-                break;
-            default:
-                break;
+            AdjustColor();
+            AdjustSize();
+            _gameObject.SetActive(_shouldBeHandled);
         }
 
-        GrowOld();
+        if (_shouldBeHandled || _state != GridState.EMPTY)
+        {
+            _shouldBeHandled = true;
+            _gameObject.SetActive(true);
+
+            if (_nutritionLevel > _maxNutritionLevel)
+                _maxNutritionLevel = _nutritionLevel;
+
+            AdjustColor();
+            AdjustSize();
+
+            switch (_state)
+            {
+                case GridState.ACTIVE_HYPHAL:
+                    this.Uptake();
+                    this.Branch();
+                    this.PassiveSubstanceMovement();
+                    break;
+                case GridState.INACTIVE_HYPHAL:
+                    this.Uptake();
+                    this.PassiveSubstanceMovement();
+                    break;
+                case GridState.TIP:
+                    this.Move();
+                    break;
+                default:
+                    break;
+            }
+
+            GrowOld();
+        }
     }
 }

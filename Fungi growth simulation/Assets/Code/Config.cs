@@ -34,9 +34,17 @@ public class Config : MonoBehaviour
 
     public static string LogDirPath = "log";
     public static float MinCellColorV = 0.33f;
+
     public static Dictionary<Tuple<int, int, int>, double> AbnormalNutritionSpots = new Dictionary<Tuple<int, int, int>, double>()
     {
-        { new Tuple<int, int, int>(7, 7, 7), 40.20f },
+        { new Tuple<int, int, int>(7, 7, 7), 100.0f },
+        { new Tuple<int, int, int>(8, 8, 8), 90.0f },
+        { new Tuple<int, int, int>(9, 9, 9), 100.0f },
+        { new Tuple<int, int, int>(10, 10, 10), 125.0f },
+        { new Tuple<int, int, int>(7, 8, 7), 110.0f },
+        { new Tuple<int, int, int>(8, 8, 9), 110.0f },
+        { new Tuple<int, int, int>(9, 10, 9), 120.0f },
+        { new Tuple<int, int, int>(10, 11, 10), 120.0f },
     };
 
     // Start is called before the first frame update

@@ -6,6 +6,5 @@ public enum GridState
     ACTIVE_HYPHAL,
     INACTIVE_HYPHAL,
     TIP,
-    ABNORMAL_NUTRITION,
     EMPTY
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Overlord : MonoBehaviour
 {
     private Grid _grid;
-    private int _frame = 0;
+    public static int Frame = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -19,7 +19,7 @@ public class Overlord : MonoBehaviour
     {
         _grid.Update();
         Statistics.IncreaseTime();
-        Debug.Log("FRAME " + _frame);
-        _frame++;
+        Debug.Log("FRAME " + Frame);
+        Frame++;
     }
 }
