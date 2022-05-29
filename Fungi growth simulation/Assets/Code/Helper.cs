@@ -17,4 +17,9 @@ public class Helper
         double randNormal = mean + stdDev * randStdNormal; //random normal(mean,stdDev^2)
         return (float)randNormal;
     }
+
+    public static String GetTimestamp(DateTime value)
+    {
+        return value.ToString("yyyyMMddHHmmssffff");
+    }
 }
