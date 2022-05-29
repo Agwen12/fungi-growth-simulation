@@ -12,9 +12,12 @@ Time,External Nutrition,Internal Nutrition,Active Hyphal,Inactive Hyphal,Tip
 def create_plot(x_axis, data, y_label, path, title, plot_type="plot"):
     y_axis = data
     fig, ax = plt.subplots(figsize=(12, 9))
-    getattr(ax, plot_type)(x_axis,
+    a = getattr(ax, plot_type)
+    marker = "." if plot_type != "plot" else None
+    # print(plot_type, marker)
+    a(x_axis,
             y_axis,
-            '-',
+            marker=marker,
             c='orange',
             linewidth=2)
     ax.set_title(f"{title} Over Time")
@@ -34,7 +37,7 @@ if __name__ == "__main__":
     create_plot(x, data["Active Hyphal"], "Active Hyphal", path, "Active Cells")
     create_plot(x, data["External Nutrition"], "External Nutrition", path, "External Nutrition")
     create_plot(x, data["Internal Nutrition"], "Internal Nutrition", path, "Internal Nutrition")
-    create_plot(x, data["Inactive Hyphal"], "Inactive Hyphal", path, "Inactive Cells")
+    create_plot(x, data["Inactive Hyphal"], "Inactive Hyphal", path, "Inactive Cells", "scatter")
 
     hyphal_sum = data["Inactive Hyphal"] + data["Active Hyphal"] + data["Tip"]
     # print(np.asarray(hyphal_sum))
@@ -42,9 +45,17 @@ if __name__ == "__main__":
                 "Hyphal Cells", path, "Hyphal Cells")
     #
     create_plot(range(len(hyphal_sum) - 1), [hyphal_sum[i+1] - hyphal_sum[i] for i in range(len(hyphal_sum) - 1)],
-                "Hyphal Difference", path, "Hyphal Difference")
+                "Hyphal Difference", path, "Hyphal Difference", "scatter")
 
-
+    create_plot(x, hyphal_sum / (data['Tip']-13), "HGU", path, "HGU")
+    # fig, ax = plt.subplots(figsize=(12, 9))
+    # for i in dir(ax):
+    #     print(i)
+    #
+    # a = getattr(ax, "scatter")(range(10), range(9, -1, -1))
+    #
+    # fig.show()
+    # print(a)
 """Time,External Nutrition,Internal Nutrition,Active Hyphal,Inactive Hyphal,Tip"""
 
 
