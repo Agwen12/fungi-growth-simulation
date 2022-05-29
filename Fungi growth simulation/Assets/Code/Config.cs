@@ -1,9 +1,41 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 
 public class Config : MonoBehaviour
 {
+    private static string filePath = "config.txt";
+
+    public static void Init(){
+        var dic = File.ReadAllLines(filePath).Select(l => l.Split(new[] { '=' })).ToDictionary( s => s[0].Trim(), s => s[1].Trim());
+        RandomSeed = int.Parse(dic["RandomSeed"]);
+        InitialChildrenPerc = float.Parse(dic["InitialChildrenPerc"]);
+        GridSize = int.Parse(dic["GridSize"]);
+        delta_x = double.Parse(dic["delta_x"], System.Globalization.NumberStyles.Float);
+        delta_t = double.Parse(dic["delta_t"], System.Globalization.NumberStyles.Float);
+        si0 = double.Parse(dic["si0"], System.Globalization.NumberStyles.Float);
+        se0 = double.Parse(dic["se0"], System.Globalization.NumberStyles.Float);
+        v = double.Parse(dic["v"], System.Globalization.NumberStyles.Float);
+        Dp = double.Parse(dic["Dp"], System.Globalization.NumberStyles.Float);
+        Da = double.Parse(dic["Da"], System.Globalization.NumberStyles.Float);
+        Di = double.Parse(dic["Di"], System.Globalization.NumberStyles.Float);
+        De = double.Parse(dic["De"], System.Globalization.NumberStyles.Float);
+        b = double.Parse(dic["b"], System.Globalization.NumberStyles.Float);
+        di = double.Parse(dic["di"], System.Globalization.NumberStyles.Float);
+        c1 = double.Parse(dic["c1"], System.Globalization.NumberStyles.Float);
+        c2 = double.Parse(dic["c2"], System.Globalization.NumberStyles.Float);
+        c3 = double.Parse(dic["c3"], System.Globalization.NumberStyles.Float);
+        c4 = double.Parse(dic["c4"], System.Globalization.NumberStyles.Float);
+        c5 = double.Parse(dic["c5"], System.Globalization.NumberStyles.Float);
+        LayersOffsetsPerc[0] = float.Parse(dic["LayersOffsetsPerc0"]);
+        LayersOffsetsPerc[1] = float.Parse(dic["LayersOffsetsPerc1"]);
+        LayersOffsetsPerc[2] = float.Parse(dic["LayersOffsetsPerc2"]);
+        activeHyphaLifespan = int.Parse(dic["activeHyphaLifespan"]);
+        MinCellColorV = float.Parse(dic["MinCellColorV"]);
+    }
+
     public static int RandomSeed = 2137;
     public static float InitialChildrenPerc = 1.0f;
     public static int GridSize = 25;
