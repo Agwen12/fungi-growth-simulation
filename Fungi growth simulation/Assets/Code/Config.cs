@@ -7,13 +7,16 @@ using UnityEngine;
 
 public class Config : MonoBehaviour
 {
-    private static string filePath = "config.txt";
+    private static string configPath = "config.txt";
+    private static string abnormalSpotsPath = "abnormal_nutrition_spots.txt";
 
     public static void Init(){
-        var dic = File.ReadAllLines(filePath).Select(l => l.Split(new[] { '=' })).ToDictionary( s => s[0].Trim(), s => s[1].Trim());
+        var dic = File.ReadAllLines(configPath).Select(l => l.Split(new[] { '=' })).ToDictionary( s => s[0].Trim(), s => s[1].Trim());
         RandomSeed = int.Parse(dic["RandomSeed"]);
         InitialChildrenPerc = float.Parse(dic["InitialChildrenPerc"]);
-        GridSize = int.Parse(dic["GridSize"]);
+        GridSize[0] = int.Parse(dic["GridSize0"]);
+        GridSize[1] = int.Parse(dic["GridSize1"]);
+        GridSize[2] = int.Parse(dic["GridSize2"]);
         delta_x = double.Parse(dic["delta_x"], System.Globalization.NumberStyles.Float);
         delta_t = double.Parse(dic["delta_t"], System.Globalization.NumberStyles.Float);
         si0 = double.Parse(dic["si0"], System.Globalization.NumberStyles.Float);
@@ -35,6 +38,18 @@ public class Config : MonoBehaviour
         LayersOffsetsPerc[2] = float.Parse(dic["LayersOffsetsPerc2"]);
         activeHyphaLifespan = int.Parse(dic["activeHyphaLifespan"]);
         MinCellColorV = float.Parse(dic["MinCellColorV"]);
+
+        var dic2 = File.ReadAllLines(abnormalSpotsPath).Select(l => l.Split(new[] { ')' })).ToArray();
+        string[] coords;
+        int[] coordsInt;
+        double val;
+        AbnormalNutritionSpots = new Dictionary<Tuple<int, int, int>, double>();
+        foreach (string[] el in dic2){
+            coords = el[0].Trim(new[]{'('}).Split(new[]{' '});
+            coordsInt = Array.ConvertAll(coords, int.Parse);
+            val = double.Parse(el[1]);
+            AbnormalNutritionSpots.Add(new Tuple<int, int, int>(coordsInt[0], coordsInt[1], coordsInt[2]), val);
+        }
     }
 
     public static int RandomSeed = 2137;

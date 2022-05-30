@@ -1,6 +1,8 @@
 RandomSeed = 2137
 InitialChildrenPerc = 1,0
-GridSize = 25
+GridSize0 = 20
+GridSize1 = 20
+GridSize2 = 40
 delta_x = 1e-01
 delta_t = 1e-03
 si0 = 1e-06
