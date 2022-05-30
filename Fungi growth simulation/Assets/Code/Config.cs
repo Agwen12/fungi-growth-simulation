@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -38,8 +39,8 @@ public class Config : MonoBehaviour
 
     public static int RandomSeed = 2137;
     public static float InitialChildrenPerc = 1.0f;
-    public static int GridSize = 25;
-    public static int[] MushroomCorePosition = { GridSize / 2, GridSize / 2, GridSize / 2 }; 
+    public static int[] GridSize = { 20, 20, 40 };
+    public static int[] MushroomCorePosition = { GridSize[0] / 2, GridSize[1] / 2, GridSize[2] / 2 };
     public static double delta_x = 1e-01;
     public static double delta_t = 1e-03;
     public static double si0 = 1e-06;
@@ -65,6 +66,18 @@ public class Config : MonoBehaviour
 
     public static string LogDirPath = "log";
     public static float MinCellColorV = 0.33f;
+
+    public static Dictionary<Tuple<int, int, int>, double> AbnormalNutritionSpots = new Dictionary<Tuple<int, int, int>, double>()
+    {
+        { new Tuple<int, int, int>(7, 7, 7), 100.0f },
+        { new Tuple<int, int, int>(8, 8, 8), 90.0f },
+        { new Tuple<int, int, int>(9, 9, 9), 100.0f },
+        { new Tuple<int, int, int>(10, 10, 10), 125.0f },
+        { new Tuple<int, int, int>(7, 8, 7), 110.0f },
+        { new Tuple<int, int, int>(8, 8, 9), 110.0f },
+        { new Tuple<int, int, int>(9, 10, 9), 120.0f },
+        { new Tuple<int, int, int>(10, 11, 10), 120.0f },
+    };
 
     // Start is called before the first frame update
     void Start()
