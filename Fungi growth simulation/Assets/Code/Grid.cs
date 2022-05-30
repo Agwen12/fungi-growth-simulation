@@ -9,16 +9,16 @@ public class Grid
 
     public Grid()
     {
-        _gridCells = new GridCellsWrapper(Config.GridSize[0], Config.GridSize[1], Config.GridSize[2]);
+        _gridCells = new GridCellsWrapper(Config.GridSize, Config.GridSize, Config.GridSize);
 
-        for (int x = 0; x < Config.GridSize[0]; x++)
-            for (int y = 0; y < Config.GridSize[1]; y++)
-                for (int z = 0; z < Config.GridSize[2]; z++)
+        for (int x = 0; x < Config.GridSize; x++)
+            for (int y = 0; y < Config.GridSize; y++)
+                for (int z = 0; z < Config.GridSize; z++)
                     InitializeGridCell(x, y, z);
 
-        for (int x = 0; x < Config.GridSize[0]; x++)      
-            for (int y = 0; y < Config.GridSize[1]; y++)        
-                for (int z = 0; z < Config.GridSize[2]; z++)
+        for (int x = 0; x < Config.GridSize; x++)      
+            for (int y = 0; y < Config.GridSize; y++)        
+                for (int z = 0; z < Config.GridSize; z++)
                     SetNeighbors(x, y, z);
 
         InitializeMushroomCore();
@@ -59,16 +59,16 @@ public class Grid
 
     public static bool IsPositionValid(int[] position)
     {
-        return (0 <= position[0] && position[0] < Config.GridSize[0] && 
-                0 <= position[1] && position[1] < Config.GridSize[1] && 
-                0 <= position[2] && position[2] < Config.GridSize[2]);
+        return (0 <= position[0] && position[0] < Config.GridSize && 
+                0 <= position[1] && position[1] < Config.GridSize && 
+                0 <= position[2] && position[2] < Config.GridSize);
     }
 
     public void Update()
     {
-        for (int x = 0; x < Config.GridSize[0]; x++)
-            for (int y = 0; y < Config.GridSize[1]; y++)
-                for (int z = 0; z < Config.GridSize[2]; z++)
+        for (int x = 0; x < Config.GridSize; x++)
+            for (int y = 0; y < Config.GridSize; y++)
+                for (int z = 0; z < Config.GridSize; z++)
                     _gridCells[x, y, z].Update();
     }
 }
