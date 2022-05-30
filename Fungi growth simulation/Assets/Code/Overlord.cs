@@ -23,6 +23,7 @@ public class Overlord : MonoBehaviour
         Statistics.IncreaseTime();
         GridCell._maxNutritionLevelPrev = GridCell._maxNutritionLevelCurr;
 
+        Debug.Log(GridCell._maxNutritionLevelCurr);
         Debug.Log("FRAME " + Frame);
         Frame++;
     }
