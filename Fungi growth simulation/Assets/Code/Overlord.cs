@@ -17,8 +17,11 @@ public class Overlord : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        GridCell._maxNutritionLevelCurr = 0;
         _grid.Update();
         Statistics.IncreaseTime();
+        GridCell._maxNutritionLevelPrev = GridCell._maxNutritionLevelCurr;
+
         Debug.Log("FRAME " + Frame);
         Frame++;
     }

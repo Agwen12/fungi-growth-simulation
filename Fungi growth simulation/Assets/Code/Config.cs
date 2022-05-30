@@ -7,8 +7,8 @@ public class Config : MonoBehaviour
 {
     public static int RandomSeed = 2137;
     public static float InitialChildrenPerc = 1.0f;
-    public static int GridSize = 25;
-    public static int[] MushroomCorePosition = { GridSize / 2, GridSize / 2, GridSize / 2 }; 
+    public static int[] GridSize = { 20, 20, 40 };
+    public static int[] MushroomCorePosition = { GridSize[0] / 2, GridSize[1] / 2, GridSize[2] / 2 };
     public static double delta_x = 1e-01;
     public static double delta_t = 1e-03;
     public static double si0 = 1e-06;

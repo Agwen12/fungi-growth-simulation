@@ -9,11 +9,12 @@ public class GridCell
     private GridState _state;
     public Direction _growthDirection;
     public double _nutritionLevel = Config.si0;
-    private static double _maxNutritionLevel = 0;
     private static double _maxExternalNutritionLevel = FindMaxExternalNutritionLevel();
     private bool _shouldBeHandled = false;
 
     public double _externalNutritionLevel = Config.se0;
+    public static double _maxNutritionLevelPrev = 0;
+    public static double _maxNutritionLevelCurr = 0;
 
     private int _x;
     private int _y;
@@ -154,7 +155,7 @@ public class GridCell
         float H, S, V;
         Color colorBase = GridStateMethods.toColor(_state);
         Color.RGBToHSV(colorBase, out H, out S, out V);
-        V = Math.Min((float)(_nutritionLevel / _maxNutritionLevel), Config.MinCellColorV);
+        V = Math.Min((float)(_nutritionLevel / _maxNutritionLevelPrev), Config.MinCellColorV);
         Color color = Color.HSVToRGB(H, S, V);
 
         _gameObject.GetComponent<Renderer>()
@@ -201,8 +202,8 @@ public class GridCell
             _shouldBeHandled = true;
             _gameObject.SetActive(true);
 
-            if (_nutritionLevel > _maxNutritionLevel)
-                _maxNutritionLevel = _nutritionLevel;
+            if (_nutritionLevel > _maxNutritionLevelCurr)
+                _maxNutritionLevelCurr = _nutritionLevel;
 
             AdjustColor();
             AdjustSize();
