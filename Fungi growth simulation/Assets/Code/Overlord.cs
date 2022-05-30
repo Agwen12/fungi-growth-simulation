@@ -12,6 +12,7 @@ public class Overlord : MonoBehaviour
     {
         Statistics.Init();
         _grid = new Grid();
+        Debug.Log("START");
     }
 
     // Update is called once per frame
