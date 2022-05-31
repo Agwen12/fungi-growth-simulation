@@ -7,11 +7,11 @@ using UnityEngine;
 
 public class Config : MonoBehaviour
 {
-    private static string configPath = "config.txt";
-    private static string abnormalSpotsPath = "abnormal_nutrition_spots.txt";
+    private static string _configPath = "config.txt";
+    private static string _abnormalSpotsPath = "abnormal_nutrition_spots.txt";
 
     public static void Init(){
-        var dic = File.ReadAllLines(configPath).Select(l => l.Split(new[] { '=' })).ToDictionary( s => s[0].Trim(), s => s[1].Trim());
+        var dic = File.ReadAllLines(_configPath).Select(l => l.Split(new[] { '=' })).ToDictionary( s => s[0].Trim(), s => s[1].Trim());
         RandomSeed = int.Parse(dic["RandomSeed"]);
         InitialChildrenPerc = float.Parse(dic["InitialChildrenPerc"]);
         GridSize[0] = int.Parse(dic["GridSize0"]);
@@ -37,11 +37,10 @@ public class Config : MonoBehaviour
         LayersOffsetsPerc[0] = float.Parse(dic["LayersOffsetsPerc0"]);
         LayersOffsetsPerc[1] = float.Parse(dic["LayersOffsetsPerc1"]);
         LayersOffsetsPerc[2] = float.Parse(dic["LayersOffsetsPerc2"]);
-        activeHyphaLifespan = int.Parse(dic["activeHyphaLifespan"]);
         LogDirPath = dic["LogDirPath"];
         MinCellColorV = float.Parse(dic["MinCellColorV"]);
 
-        var dic2 = File.ReadAllLines(abnormalSpotsPath).Select(l => l.Split(new[] { ')' })).ToArray();
+        var dic2 = File.ReadAllLines(_abnormalSpotsPath).Select(l => l.Split(new[] { ')' })).ToArray();
         string[] coords;
         int[] coordsInt;
         double val;
@@ -75,7 +74,6 @@ public class Config : MonoBehaviour
     public static double c4;
     public static double c5;
     public static float[] LayersOffsetsPerc = new float[3];
-    public static int activeHyphaLifespan;
     public static string LogDirPath;
     public static float MinCellColorV;
     public static Dictionary<Tuple<int, int, int>, double> AbnormalNutritionSpots;

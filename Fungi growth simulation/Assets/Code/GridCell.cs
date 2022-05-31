@@ -1,27 +1,27 @@
-using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
 
 public class GridCell
 {
-    private Dictionary<Direction, GridCell> _neighbors = new Dictionary<Direction, GridCell>();
-    private GridState _state;
-    public Direction _growthDirection;
-    public double _nutritionLevel = Config.si0;
+    public static double MaxNutritionLevelPrev = 0;
+    public static double MaxNutritionLevelCurr = 0;
+
     private static double _maxExternalNutritionLevel = FindMaxExternalNutritionLevel();
+    private static GameObject _prefab = GameObject.Instantiate(Resources.Load("GridCell")) as GameObject;
+    private static Vector3 _prefabSize = (_prefab.GetComponent(typeof(Renderer)) as Renderer).bounds.size;
+
+    public Direction GrowthDirection;
+    public double NutritionLevel = Config.si0;
+    public double ExternalNutritionLevel = Config.se0;
+
     private bool _shouldBeHandled = false;
-
-    public double _externalNutritionLevel = Config.se0;
-    public static double _maxNutritionLevelPrev = 0;
-    public static double _maxNutritionLevelCurr = 0;
-
+    private GridState _state;
     private int _x;
     private int _y;
     private int _z;
+    private Dictionary<Direction, GridCell> _neighbors = new Dictionary<Direction, GridCell>();
     private GameObject _gameObject;
-    private static GameObject _prefab = GameObject.Instantiate(Resources.Load("GridCell")) as GameObject;
-    private static Vector3 _prefabSize = (_prefab.GetComponent(typeof(Renderer)) as Renderer).bounds.size;
     private int _age = 0;
 
     public GridCell(int x, int y, int z)
@@ -47,7 +47,7 @@ public class GridCell
         Tuple<int, int, int> coordsTuple = new Tuple<int, int, int>(_x, _y, _z);
         if (Config.AbnormalNutritionSpots.ContainsKey(coordsTuple))
         {
-            _externalNutritionLevel *= Config.AbnormalNutritionSpots[coordsTuple];
+            ExternalNutritionLevel *= Config.AbnormalNutritionSpots[coordsTuple];
             _shouldBeHandled = true;
         }
     }
@@ -75,9 +75,9 @@ public class GridCell
     private bool CheckAndApplyMoveCost()
     {
         double cost = Config.delta_x * Config.c2;
-        if (_nutritionLevel >= cost)
+        if (NutritionLevel >= cost)
         {
-            _nutritionLevel -= cost;
+            NutritionLevel -= cost;
             return true;
         }
         return false;
@@ -86,30 +86,30 @@ public class GridCell
     private void Move()
     {
         double dtdx = Config.delta_t / Config.delta_x;
-        double sameDirection = _nutritionLevel * (Config.v * dtdx + Config.Dp * dtdx / Config.delta_x);
-        double acuteAngle = Config.Dp * _nutritionLevel * dtdx / Config.delta_x;
+        double sameDirection = NutritionLevel * (Config.v * dtdx + Config.Dp * dtdx / Config.delta_x);
+        double acuteAngle = Config.Dp * NutritionLevel * dtdx / Config.delta_x;
         double randomNumber = Helper.Rnd.NextDouble();
-        /*Debug.Log("SAME DIR " + sameDirection + " MOVE " + acuteAngle);*/
+
         if (randomNumber <= sameDirection)
         {
-            if (_neighbors.ContainsKey(_growthDirection) &&
+            if (_neighbors.ContainsKey(GrowthDirection) &&
                 CheckAndApplyMoveCost())
             {
                 _state = GridState.ACTIVE_HYPHAL;
-                _neighbors[_growthDirection]._growthDirection = _growthDirection;
-                _neighbors[_growthDirection].SetState(GridState.TIP);
+                _neighbors[GrowthDirection].GrowthDirection = GrowthDirection;
+                _neighbors[GrowthDirection].SetState(GridState.TIP);
                 this.SetState(GridState.ACTIVE_HYPHAL);
             }
         }
         else if (sameDirection < randomNumber && randomNumber < sameDirection + acuteAngle)
         {
             // move 
-            Direction newGrowthDirection = DirectionMethods.GetAcute(_growthDirection);
+            Direction newGrowthDirection = DirectionMethods.GetAcute(GrowthDirection);
             if (_neighbors.ContainsKey(newGrowthDirection) &&
                 CheckAndApplyMoveCost())
             {
                 _state = GridState.ACTIVE_HYPHAL;
-                _neighbors[newGrowthDirection]._growthDirection = _growthDirection;
+                _neighbors[newGrowthDirection].GrowthDirection = GrowthDirection;
                 _neighbors[newGrowthDirection].SetState(GridState.TIP);
                 this.SetState(GridState.ACTIVE_HYPHAL);
             }
@@ -122,16 +122,16 @@ public class GridCell
 
     private void Branch()
     {
-        double branchingProbabilty = Config.b * _nutritionLevel * Config.delta_t;
-        /*Debug.Log("BRANCHING " + branchingProbabilty);*/
+        double branchingProbabilty = Config.b * NutritionLevel * Config.delta_t;
+
         if (Helper.Rnd.NextDouble() <= branchingProbabilty) 
         {
-            Direction newGrowthDirection = DirectionMethods.GetAcute(_growthDirection);
+            Direction newGrowthDirection = DirectionMethods.GetAcute(GrowthDirection);
             if (_neighbors.ContainsKey(newGrowthDirection) && 
                 _neighbors[newGrowthDirection]._state == GridState.EMPTY &&
                 CheckAndApplyMoveCost())
             {
-                _neighbors[newGrowthDirection]._growthDirection = newGrowthDirection;
+                _neighbors[newGrowthDirection].GrowthDirection = newGrowthDirection;
                 _neighbors[newGrowthDirection].SetState(GridState.TIP);
             }
         }
@@ -142,18 +142,17 @@ public class GridCell
         foreach (KeyValuePair<Direction, GridCell> entry in _neighbors)
         {
             if ((entry.Value._state == GridState.ACTIVE_HYPHAL ||
-                entry.Value._state == GridState.INACTIVE_HYPHAL ||
                 entry.Value._state == GridState.TIP))
                 {
                     // nutrines k ====> j
                     double ammount = Config.Da * Config.delta_t *
-                                     (entry.Value._nutritionLevel - _nutritionLevel) / (Config.delta_x * Config.delta_x);
+                                     (entry.Value.NutritionLevel - NutritionLevel) / (Config.delta_x * Config.delta_x);
 
-                    if (ammount > 0 && entry.Value._nutritionLevel >= ammount && 
+                    if (ammount > 0 && entry.Value.NutritionLevel >= ammount && 
                         entry.Value._state != GridState.TIP)
                     {
-                        _nutritionLevel += ammount;
-                        entry.Value._nutritionLevel -= ammount;
+                        NutritionLevel += ammount;
+                        entry.Value.NutritionLevel -= ammount;
                     }
                 }
         }
@@ -164,30 +163,30 @@ public class GridCell
         double ammount;
         foreach (var neighborCell in _neighbors.Values)
         {
-            ammount = neighborCell._externalNutritionLevel * _nutritionLevel * Config.delta_t;
+            ammount = neighborCell.ExternalNutritionLevel * NutritionLevel * Config.delta_t;
             if (neighborCell._state == GridState.EMPTY &&
-                neighborCell._externalNutritionLevel > Config.c3 * ammount)
+                neighborCell.ExternalNutritionLevel > Config.c3 * ammount)
             {
-                _nutritionLevel += Config.c1 * ammount;
-                neighborCell._externalNutritionLevel -= Config.c3 * ammount;
+                NutritionLevel += Config.c1 * ammount;
+                neighborCell.ExternalNutritionLevel -= Config.c3 * ammount;
             }
         }
 
-        ammount = _externalNutritionLevel * _nutritionLevel * Config.delta_t;
+        ammount = ExternalNutritionLevel * NutritionLevel * Config.delta_t;
         if (_state == GridState.EMPTY &&
-            _externalNutritionLevel > Config.c3 * ammount)
+            ExternalNutritionLevel > Config.c3 * ammount)
         {
-            _nutritionLevel += Config.c1 * ammount;
-            _externalNutritionLevel -= Config.c3 * ammount;
+            NutritionLevel += Config.c1 * ammount;
+            ExternalNutritionLevel -= Config.c3 * ammount;
         }
     }
 
     private void AdjustColor()
     {
         float H, S, V;
-        Color colorBase = GridStateMethods.toColor(_state);
+        Color colorBase = GridStateMethods.ToColor(_state);
         Color.RGBToHSV(colorBase, out H, out S, out V);
-        V = Math.Max((float)(_nutritionLevel / _maxNutritionLevelPrev), Config.MinCellColorV);
+        V = Math.Max((float)(NutritionLevel / MaxNutritionLevelPrev), Config.MinCellColorV);
         Color color = Color.HSVToRGB(H, S, V);
 
         _gameObject.GetComponent<Renderer>()
@@ -203,7 +202,7 @@ public class GridCell
         {
             float scalar = 0.75f;
             if (_maxExternalNutritionLevel > 0)
-                scalar *= (float)(_externalNutritionLevel / _maxExternalNutritionLevel);
+                scalar *= (float)(ExternalNutritionLevel / _maxExternalNutritionLevel);
             newSize *= scalar;
         }
 
@@ -213,14 +212,13 @@ public class GridCell
     private void GrowOld()
     {
         if (_state == GridState.ACTIVE_HYPHAL)
-            if (++_age >= Config.activeHyphaLifespan)
-                _state = GridState.INACTIVE_HYPHAL;
+            ++_age;
     }
 
     public void Update()
     {
-        Statistics.IncreaseInternalNutrition(_nutritionLevel);
-        Statistics.IncreaseExternalNutrition(_externalNutritionLevel);
+        Statistics.IncreaseInternalNutrition(NutritionLevel);
+        Statistics.IncreaseExternalNutrition(ExternalNutritionLevel);
         Statistics.IncreaseHyphaCount(_state);
 
         if (Overlord.Frame == 0)
@@ -235,8 +233,8 @@ public class GridCell
             _shouldBeHandled = true;
             _gameObject.SetActive(true);
 
-            if (_nutritionLevel > _maxNutritionLevelCurr)
-                _maxNutritionLevelCurr = _nutritionLevel;
+            if (NutritionLevel > MaxNutritionLevelCurr)
+                MaxNutritionLevelCurr = NutritionLevel;
 
             AdjustColor();
             AdjustSize();
@@ -246,10 +244,6 @@ public class GridCell
                 case GridState.ACTIVE_HYPHAL:
                     this.Uptake();
                     this.Branch();
-                    this.PassiveSubstanceMovement();
-                    break;
-                case GridState.INACTIVE_HYPHAL:
-                    this.Uptake();
                     this.PassiveSubstanceMovement();
                     break;
                 case GridState.TIP:

@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class Grid
 {
@@ -51,7 +48,7 @@ public class Grid
                 if (IsPositionValid(neighborPosition))
                 {
                     _gridCells[neighborPosition].SetState(GridState.TIP);
-                    _gridCells[neighborPosition]._growthDirection = direction;
+                    _gridCells[neighborPosition].GrowthDirection = direction;
                 }
             }
             ++i;

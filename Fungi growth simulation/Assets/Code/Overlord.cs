@@ -1,13 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Overlord : MonoBehaviour
 {
+    public static int Frame = 0;
+
     private bool _startFinished = false;
     private Grid _grid;
-    bool paused = false;
-    public static int Frame = 0;
+    private bool paused = false;
 
     // Start is called before the first frame update
     void Start()
@@ -34,10 +33,10 @@ public class Overlord : MonoBehaviour
 
             if (!paused)
             {
-                GridCell._maxNutritionLevelCurr = 0;
+                GridCell.MaxNutritionLevelCurr = 0;
                 _grid.Update();
                 Statistics.IncreaseTime();
-                GridCell._maxNutritionLevelPrev = GridCell._maxNutritionLevelCurr;
+                GridCell.MaxNutritionLevelPrev = GridCell.MaxNutritionLevelCurr;
                 Debug.Log("FRAME " + Frame);
                 Frame++;
             }

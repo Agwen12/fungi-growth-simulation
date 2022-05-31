@@ -1,8 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
 
 public static class Statistics
 {
@@ -10,7 +7,6 @@ public static class Statistics
     private static double _externalNutrition;
     private static double _internalNutrition;
     private static int _activeHyphal;
-    private static int _inactiveHyphal;
     private static int _tip;
     private static String _logFile = Helper.GetTimestamp(DateTime.Now) + ".csv";
 
@@ -19,7 +15,7 @@ public static class Statistics
         Directory.CreateDirectory(Config.LogDirPath);
         using (StreamWriter sw = File.AppendText(Path.Combine(Config.LogDirPath, _logFile)))
         {
-            sw.WriteLine("Time,External Nutrition,Internal Nutrition,Active Hyphal,Inactive Hyphal,Tip");
+            sw.WriteLine("Time,External Nutrition,Internal Nutrition,Active Hyphal,Tip");
         }
         Reset();
     }
@@ -28,7 +24,7 @@ public static class Statistics
     {
         using (StreamWriter sw = File.AppendText(Path.Combine(Config.LogDirPath, _logFile)))
         {
-            sw.WriteLine($"{_time*Config.delta_t},{_externalNutrition},{_internalNutrition},{_activeHyphal},{_inactiveHyphal},{_tip}");
+            sw.WriteLine($"{_time*Config.delta_t},{_externalNutrition},{_internalNutrition},{_activeHyphal},{_tip}");
         }
     }
 
@@ -56,9 +52,6 @@ public static class Statistics
             case GridState.ACTIVE_HYPHAL:
                 _activeHyphal++;
                 break;
-            case GridState.INACTIVE_HYPHAL:
-                _inactiveHyphal++;
-                break;
             case GridState.TIP:
                 _tip++;
                 break;
@@ -70,7 +63,6 @@ public static class Statistics
         _externalNutrition = 0;
         _internalNutrition = 0;
         _activeHyphal = 0;
-        _inactiveHyphal = 0;
         _tip = 0;
     }
 }

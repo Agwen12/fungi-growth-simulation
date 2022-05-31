@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 public static class DirectionMethods
 {
@@ -63,10 +61,4 @@ public static class DirectionMethods
         Direction[] acuteDirections = _directionToAcute[direction];
         return acuteDirections[Helper.Rnd.Next(acuteDirections.Length)];
     }
-
-/*    public static Direction GetRandomDirection()
-    {
-        Array values = Enum.GetValues(typeof(Direction));
-        return (Direction)values.GetValue(Helper.Rnd.Next(values.Length));
-    }*/
 }
