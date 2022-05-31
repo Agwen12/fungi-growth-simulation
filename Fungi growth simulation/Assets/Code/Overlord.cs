@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Overlord : MonoBehaviour
 {
+    private bool _startFinished = false;
     private Grid _grid;
     bool paused = false;
     public static int Frame = 0;
@@ -11,10 +12,11 @@ public class Overlord : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Statistics.Init();
         Config.Init();
+        Statistics.Init();
         _grid = new Grid();
         Debug.Log("START");
+        _startFinished = true;
     }
     
     public bool IsPaused()
@@ -25,17 +27,20 @@ public class Overlord : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown (KeyCode.P))
-            paused = !paused;
-
-        if (!paused)
+        if (_startFinished)
         {
-            GridCell._maxNutritionLevelCurr = 0;
-            _grid.Update();
-            Statistics.IncreaseTime();
-            GridCell._maxNutritionLevelPrev = GridCell._maxNutritionLevelCurr;
-            Debug.Log("FRAME " + Frame);
-            Frame++;
+            if (Input.GetKeyDown(KeyCode.P))
+                paused = !paused;
+
+            if (!paused)
+            {
+                GridCell._maxNutritionLevelCurr = 0;
+                _grid.Update();
+                Statistics.IncreaseTime();
+                GridCell._maxNutritionLevelPrev = GridCell._maxNutritionLevelCurr;
+                Debug.Log("FRAME " + Frame);
+                Frame++;
+            }
         }
     }
 }

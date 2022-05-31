@@ -17,6 +17,7 @@ public class Config : MonoBehaviour
         GridSize[0] = int.Parse(dic["GridSize0"]);
         GridSize[1] = int.Parse(dic["GridSize1"]);
         GridSize[2] = int.Parse(dic["GridSize2"]);
+        MushroomCorePosition = new int[] { GridSize[0] / 2, GridSize[1] / 2, GridSize[2] / 2 };
         delta_x = double.Parse(dic["delta_x"], System.Globalization.NumberStyles.Float);
         delta_t = double.Parse(dic["delta_t"], System.Globalization.NumberStyles.Float);
         si0 = double.Parse(dic["si0"], System.Globalization.NumberStyles.Float);
@@ -37,6 +38,7 @@ public class Config : MonoBehaviour
         LayersOffsetsPerc[1] = float.Parse(dic["LayersOffsetsPerc1"]);
         LayersOffsetsPerc[2] = float.Parse(dic["LayersOffsetsPerc2"]);
         activeHyphaLifespan = int.Parse(dic["activeHyphaLifespan"]);
+        LogDirPath = dic["LogDirPath"];
         MinCellColorV = float.Parse(dic["MinCellColorV"]);
 
         var dic2 = File.ReadAllLines(abnormalSpotsPath).Select(l => l.Split(new[] { ')' })).ToArray();
@@ -52,45 +54,31 @@ public class Config : MonoBehaviour
         }
     }
 
-    public static int RandomSeed = 2137;
-    public static float InitialChildrenPerc = 1.0f;
-    public static int[] GridSize = { 20, 20, 40 };
-    public static int[] MushroomCorePosition = { GridSize[0] / 2, GridSize[1] / 2, GridSize[2] / 2 };
-    public static double delta_x = 2e-5;
-    public static double delta_t = 1e-2;
-    public static double si0 = 1e-06;
-    public static double se0 = 1e-06;
-    public static double v = 1e-02;
-    public static double Dp = 1e-03;
-    public static double Da = 3.456;
-    public static double Di = 0.3456;
-    public static double De = 0.3456;
-    public static double b = 1e+05;
-    public static double di = 1e-02;
-    public static double c1 = 9e+07;
-    public static double c2 = 1e-07;
-    public static double c3 = 1e+08;
-    public static double c4 = 1e-11;
-    public static double c5 = 1e-11;
-
-    public static float[] LayersOffsetsPerc = new float[] { 0.5f, 0.5f, 0.7f };
-
-    public static int activeHyphaLifespan = 10000000;
-
-    public static string LogDirPath = "log";
-    public static float MinCellColorV = 0.25f;
-
-    public static Dictionary<Tuple<int, int, int>, double> AbnormalNutritionSpots = new Dictionary<Tuple<int, int, int>, double>()
-    {
-        { new Tuple<int, int, int>(7, 7, 7), 100.0f },
-        { new Tuple<int, int, int>(8, 8, 8), 90.0f },
-        { new Tuple<int, int, int>(9, 9, 9), 100.0f },
-        { new Tuple<int, int, int>(10, 10, 10), 125.0f },
-        { new Tuple<int, int, int>(7, 8, 7), 110.0f },
-        { new Tuple<int, int, int>(8, 8, 9), 110.0f },
-        { new Tuple<int, int, int>(9, 10, 9), 120.0f },
-        { new Tuple<int, int, int>(10, 11, 10), 120.0f },
-    };
+    public static int RandomSeed;
+    public static float InitialChildrenPerc;
+    public static int[] GridSize = new int[3];
+    public static int[] MushroomCorePosition;
+    public static double delta_x;
+    public static double delta_t;
+    public static double si0;
+    public static double se0;
+    public static double v;
+    public static double Dp;
+    public static double Da;
+    public static double Di;
+    public static double De;
+    public static double b;
+    public static double di;
+    public static double c1;
+    public static double c2;
+    public static double c3;
+    public static double c4;
+    public static double c5;
+    public static float[] LayersOffsetsPerc = new float[3];
+    public static int activeHyphaLifespan;
+    public static string LogDirPath;
+    public static float MinCellColorV;
+    public static Dictionary<Tuple<int, int, int>, double> AbnormalNutritionSpots;
 
     // Start is called before the first frame update
     void Start()
