@@ -8,7 +8,7 @@ public class GridCell
     public static double MaxNutritionLevelCurr = 0;
 
     private static double _maxExternalNutritionLevel = FindMaxExternalNutritionLevel();
-    private static GameObject _prefab = GameObject.Instantiate(Resources.Load("GridCell")) as GameObject;
+    private static GameObject _prefab = Resources.Load("GridCell") as GameObject;
     private static Vector3 _prefabSize = (_prefab.GetComponent(typeof(Renderer)) as Renderer).bounds.size;
 
     public Direction GrowthDirection;
