@@ -141,16 +141,15 @@ public class GridCell
     {
         foreach (KeyValuePair<Direction, GridCell> entry in _neighbors)
         {
-            if ((entry.Value._state == GridState.ACTIVE_HYPHAL ||
-                entry.Value._state == GridState.TIP))
+            if ((entry.Value._state == GridState.ACTIVE_HYPHAL))
                 {
                     // nutrines k ====> j
-                    double ammount = Config.Da * Config.delta_t *
-                                     (entry.Value.NutritionLevel - NutritionLevel) / (Config.delta_x * Config.delta_x);
+                    double ammount = Config.Di * Config.delta_t *
+                                     (NutritionLevel - entry.Value.NutritionLevel) / (Config.delta_x * Config.delta_x);
 
-                    if (ammount > 0 && entry.Value.NutritionLevel >= ammount && 
-                        entry.Value._state != GridState.TIP)
+                    if (ammount > 0 && entry.Value.NutritionLevel >= ammount)
                     {
+                        //Debug.Log("NUTRINES k =====> j " + ammount);
                         NutritionLevel += ammount;
                         entry.Value.NutritionLevel -= ammount;
                     }
