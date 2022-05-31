@@ -28,7 +28,7 @@ public static class Statistics
     {
         using (StreamWriter sw = File.AppendText(Path.Combine(Config.LogDirPath, _logFile)))
         {
-            sw.WriteLine($"{_time},{_externalNutrition},{_internalNutrition},{_activeHyphal},{_inactiveHyphal},{_tip}");
+            sw.WriteLine($"{_time*Config.delta_t},{_externalNutrition},{_internalNutrition},{_activeHyphal},{_inactiveHyphal},{_tip}");
         }
     }
 
