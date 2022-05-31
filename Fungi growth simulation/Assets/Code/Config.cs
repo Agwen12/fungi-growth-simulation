@@ -56,31 +56,29 @@ public class Config : MonoBehaviour
     public static float InitialChildrenPerc = 1.0f;
     public static int[] GridSize = { 20, 20, 40 };
     public static int[] MushroomCorePosition = { GridSize[0] / 2, GridSize[1] / 2, GridSize[2] / 2 };
-    public static double delta_x = 1e-01;
-    public static double delta_t = 1e-03;
+    public static double delta_x = 2e-5;
+    public static double delta_t = 1e-2;
     public static double si0 = 1e-06;
-    public static double se0 = 1e+01;
+    public static double se0 = 1e-06;
     public static double v = 1e-02;
     public static double Dp = 1e-03;
-
     public static double Da = 3.456;
     public static double Di = 0.3456;
-
     public static double De = 0.3456;
-    public static double b = 1e-02;
+    public static double b = 1e+05;
     public static double di = 1e-02;
-    public static double c1 = 9e+01;
+    public static double c1 = 9e+07;
     public static double c2 = 1e-07;
-    public static double c3 = 1e+01;
+    public static double c3 = 1e+08;
     public static double c4 = 1e-11;
     public static double c5 = 1e-11;
 
     public static float[] LayersOffsetsPerc = new float[] { 0.5f, 0.5f, 0.7f };
 
-    public static int activeHyphaLifespan = 500;
+    public static int activeHyphaLifespan = 10000000;
 
     public static string LogDirPath = "log";
-    public static float MinCellColorV = 0.33f;
+    public static float MinCellColorV = 0.25f;
 
     public static Dictionary<Tuple<int, int, int>, double> AbnormalNutritionSpots = new Dictionary<Tuple<int, int, int>, double>()
     {

@@ -14,6 +14,7 @@ public class Overlord : MonoBehaviour
         Statistics.Init();
         Config.Init();
         _grid = new Grid();
+        Debug.Log("START");
     }
     
     public bool IsPaused()
@@ -33,7 +34,6 @@ public class Overlord : MonoBehaviour
             _grid.Update();
             Statistics.IncreaseTime();
             GridCell._maxNutritionLevelPrev = GridCell._maxNutritionLevelCurr;
-
             Debug.Log("FRAME " + Frame);
             Frame++;
         }

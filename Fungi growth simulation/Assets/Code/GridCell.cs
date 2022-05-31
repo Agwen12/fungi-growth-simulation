@@ -71,6 +71,17 @@ public class GridCell
 
         return maxScalar * Config.se0;
     }
+    
+    private bool CheckAndApplyMoveCost()
+    {
+        double cost = Config.delta_x * Config.c2;
+        if (_nutritionLevel >= cost)
+        {
+            _nutritionLevel -= cost;
+            return true;
+        }
+        return false;
+    }
 
     private void Move()
     {
@@ -79,9 +90,10 @@ public class GridCell
         double acuteAngle = Config.Dp * _nutritionLevel * dtdx / Config.delta_x;
         double randomNumber = Helper.Rnd.NextDouble();
         /*Debug.Log("SAME DIR " + sameDirection + " MOVE " + acuteAngle);*/
-        if (randomNumber <= sameDirection) 
+        if (randomNumber <= sameDirection)
         {
-            if (_neighbors.ContainsKey(_growthDirection))
+            if (_neighbors.ContainsKey(_growthDirection) &&
+                CheckAndApplyMoveCost())
             {
                 _state = GridState.ACTIVE_HYPHAL;
                 _neighbors[_growthDirection]._growthDirection = _growthDirection;
@@ -93,7 +105,8 @@ public class GridCell
         {
             // move 
             Direction newGrowthDirection = DirectionMethods.GetAcute(_growthDirection);
-            if (_neighbors.ContainsKey(newGrowthDirection))
+            if (_neighbors.ContainsKey(newGrowthDirection) &&
+                CheckAndApplyMoveCost())
             {
                 _state = GridState.ACTIVE_HYPHAL;
                 _neighbors[newGrowthDirection]._growthDirection = _growthDirection;
@@ -114,7 +127,9 @@ public class GridCell
         if (Helper.Rnd.NextDouble() <= branchingProbabilty) 
         {
             Direction newGrowthDirection = DirectionMethods.GetAcute(_growthDirection);
-            if (_neighbors.ContainsKey(newGrowthDirection))
+            if (_neighbors.ContainsKey(newGrowthDirection) && 
+                _neighbors[newGrowthDirection]._state == GridState.EMPTY &&
+                CheckAndApplyMoveCost())
             {
                 _neighbors[newGrowthDirection]._growthDirection = newGrowthDirection;
                 _neighbors[newGrowthDirection].SetState(GridState.TIP);
@@ -128,22 +143,39 @@ public class GridCell
         {
             if ((entry.Value._state == GridState.ACTIVE_HYPHAL ||
                 entry.Value._state == GridState.INACTIVE_HYPHAL ||
-                entry.Value._state == GridState.TIP) )
+                entry.Value._state == GridState.TIP))
                 {
                     // nutrines k ====> j
                     double ammount = Config.Da * Config.delta_t *
                                      (entry.Value._nutritionLevel - _nutritionLevel) / (Config.delta_x * Config.delta_x);
 
-                    _nutritionLevel += ammount;
-                    entry.Value._nutritionLevel -= ammount;
+                    if (ammount > 0 && entry.Value._nutritionLevel >= ammount && 
+                        entry.Value._state != GridState.TIP)
+                    {
+                        _nutritionLevel += ammount;
+                        entry.Value._nutritionLevel -= ammount;
+                    }
                 }
         }
     }
 
     private void Uptake()
     {
-        double ammount = _externalNutritionLevel * _nutritionLevel * Config.delta_t;
-        if (_externalNutritionLevel > Config.c3 * ammount) 
+        double ammount;
+        foreach (var neighborCell in _neighbors.Values)
+        {
+            ammount = neighborCell._externalNutritionLevel * _nutritionLevel * Config.delta_t;
+            if (neighborCell._state == GridState.EMPTY &&
+                neighborCell._externalNutritionLevel > Config.c3 * ammount)
+            {
+                _nutritionLevel += Config.c1 * ammount;
+                neighborCell._externalNutritionLevel -= Config.c3 * ammount;
+            }
+        }
+
+        ammount = _externalNutritionLevel * _nutritionLevel * Config.delta_t;
+        if (_state == GridState.EMPTY &&
+            _externalNutritionLevel > Config.c3 * ammount)
         {
             _nutritionLevel += Config.c1 * ammount;
             _externalNutritionLevel -= Config.c3 * ammount;
@@ -155,7 +187,7 @@ public class GridCell
         float H, S, V;
         Color colorBase = GridStateMethods.toColor(_state);
         Color.RGBToHSV(colorBase, out H, out S, out V);
-        V = Math.Min((float)(_nutritionLevel / _maxNutritionLevelPrev), Config.MinCellColorV);
+        V = Math.Max((float)(_nutritionLevel / _maxNutritionLevelPrev), Config.MinCellColorV);
         Color color = Color.HSVToRGB(H, S, V);
 
         _gameObject.GetComponent<Renderer>()
@@ -170,7 +202,8 @@ public class GridCell
         if (_state == GridState.EMPTY)
         {
             float scalar = 0.75f;
-            scalar *= (float)(_externalNutritionLevel / _maxExternalNutritionLevel);
+            if (_maxExternalNutritionLevel > 0)
+                scalar *= (float)(_externalNutritionLevel / _maxExternalNutritionLevel);
             newSize *= scalar;
         }
 

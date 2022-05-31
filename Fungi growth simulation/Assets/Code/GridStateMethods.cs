@@ -10,7 +10,7 @@ public static class GridStateMethods
         {
             GridState.ACTIVE_HYPHAL => Color.green,
             GridState.INACTIVE_HYPHAL => Color.gray,
-            GridState.TIP => Color.blue,
+            GridState.TIP => Color.red,
             GridState.EMPTY => Color.magenta,
             _ => Color.black
         };
