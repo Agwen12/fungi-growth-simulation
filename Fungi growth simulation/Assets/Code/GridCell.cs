@@ -9,9 +9,12 @@ public class GridCell
     private GridState _state;
     public Direction _growthDirection;
     public double _nutritionLevel = Config.si0;
-    private static double _maxNutritionLevel = 0;
+    private static double _maxExternalNutritionLevel = FindMaxExternalNutritionLevel();
+    private bool _shouldBeHandled = false;
 
     public double _externalNutritionLevel = Config.se0;
+    public static double _maxNutritionLevelPrev = 0;
+    public static double _maxNutritionLevelCurr = 0;
 
     private int _x;
     private int _y;
@@ -27,6 +30,7 @@ public class GridCell
         _x = x;
         _y = y;
         _z = z;
+
         Vector3 position = new Vector3(_x * _prefabSize.x, _y * _prefabSize.y, _z * _prefabSize.z);
         Vector3 layerOffset = new Vector3(0, 0, Config.LayersOffsetsPerc[2] * _prefabSize.z * (-Config.LayersOffsetsPerc[2] * _z));
         if (z % 2 == 1)
@@ -39,6 +43,13 @@ public class GridCell
             position += new Vector3(0, 0, Config.LayersOffsetsPerc[2] * _prefabSize.z);
         position += layerOffset;
         _gameObject = GameObject.Instantiate(_prefab, position, Quaternion.identity);
+
+        Tuple<int, int, int> coordsTuple = new Tuple<int, int, int>(_x, _y, _z);
+        if (Config.AbnormalNutritionSpots.ContainsKey(coordsTuple))
+        {
+            _externalNutritionLevel *= Config.AbnormalNutritionSpots[coordsTuple];
+            _shouldBeHandled = true;
+        }
     }
 
     public void AddNeighbor(Direction direction, GridCell neighbor)
@@ -49,6 +60,16 @@ public class GridCell
     public void SetState(GridState state)
     {
         _state = state;
+    }
+
+    private static double FindMaxExternalNutritionLevel()
+    {
+        double maxScalar = 0;
+
+        foreach (var scalar in Config.AbnormalNutritionSpots.Values)
+            maxScalar = Math.Max(maxScalar, scalar);
+
+        return maxScalar * Config.se0;
     }
 
     private void Move()
@@ -121,9 +142,9 @@ public class GridCell
 
     private void Uptake()
     {
-        if (_externalNutritionLevel > 0) 
+        double ammount = _externalNutritionLevel * _nutritionLevel * Config.delta_t;
+        if (_externalNutritionLevel > Config.c3 * ammount) 
         {
-            double ammount = _externalNutritionLevel * _nutritionLevel * Config.delta_t;
             _nutritionLevel += Config.c1 * ammount;
             _externalNutritionLevel -= Config.c3 * ammount;
         }
@@ -134,13 +155,26 @@ public class GridCell
         float H, S, V;
         Color colorBase = GridStateMethods.toColor(_state);
         Color.RGBToHSV(colorBase, out H, out S, out V);
-        V = Math.Min((float)(_nutritionLevel / _maxNutritionLevel), Config.MinCellColorV);
+        V = Math.Min((float)(_nutritionLevel / _maxNutritionLevelPrev), Config.MinCellColorV);
         Color color = Color.HSVToRGB(H, S, V);
 
         _gameObject.GetComponent<Renderer>()
            .material
            .SetColor("_Color", color);
-        _gameObject.SetActive(_state != GridState.EMPTY);
+    }
+
+    private void AdjustSize()
+    {
+        Vector3 newSize = _prefab.transform.localScale;
+
+        if (_state == GridState.EMPTY)
+        {
+            float scalar = 0.75f;
+            scalar *= (float)(_externalNutritionLevel / _maxExternalNutritionLevel);
+            newSize *= scalar;
+        }
+
+        _gameObject.transform.localScale = newSize;
     }
 
     private void GrowOld()
@@ -156,29 +190,43 @@ public class GridCell
         Statistics.IncreaseExternalNutrition(_externalNutritionLevel);
         Statistics.IncreaseHyphaCount(_state);
 
-        if (_nutritionLevel > _maxNutritionLevel)
-            _maxNutritionLevel = _nutritionLevel;
-
-        AdjustColor();
-
-        switch (_state)
+        if (Overlord.Frame == 0)
         {
-            case GridState.ACTIVE_HYPHAL:
-                this.Uptake();
-                this.Branch();
-                this.PassiveSubstanceMovement();
-                break;
-            case GridState.INACTIVE_HYPHAL:
-                this.Uptake();
-                this.PassiveSubstanceMovement();
-                break;
-            case GridState.TIP:
-                this.Move();
-                break;
-            default:
-                break;
+            AdjustColor();
+            AdjustSize();
+            _gameObject.SetActive(_shouldBeHandled);
         }
 
-        GrowOld();
+        if (_shouldBeHandled || _state != GridState.EMPTY)
+        {
+            _shouldBeHandled = true;
+            _gameObject.SetActive(true);
+
+            if (_nutritionLevel > _maxNutritionLevelCurr)
+                _maxNutritionLevelCurr = _nutritionLevel;
+
+            AdjustColor();
+            AdjustSize();
+
+            switch (_state)
+            {
+                case GridState.ACTIVE_HYPHAL:
+                    this.Uptake();
+                    this.Branch();
+                    this.PassiveSubstanceMovement();
+                    break;
+                case GridState.INACTIVE_HYPHAL:
+                    this.Uptake();
+                    this.PassiveSubstanceMovement();
+                    break;
+                case GridState.TIP:
+                    this.Move();
+                    break;
+                default:
+                    break;
+            }
+
+            GrowOld();
+        }
     }
 }
