@@ -11,7 +11,7 @@ public class Config : MonoBehaviour
     private static string _abnormalSpotsPath = "abnormal_nutrition_spots.txt";
 
     public static void Init(){
-        var dic = File.ReadAllLines(_configPath).Select(l => l.Split(new[] { '=' })).ToDictionary( s => s[0].Trim(), s => s[1].Trim());
+        var dic = File.ReadAllLines(Path.Combine(Application.streamingAssetsPath, _configPath)).Select(l => l.Split(new[] { '=' })).ToDictionary( s => s[0].Trim(), s => s[1].Trim());
         RandomSeed = int.Parse(dic["RandomSeed"]);
         InitialChildrenPerc = float.Parse(dic["InitialChildrenPerc"]);
         GridSize[0] = int.Parse(dic["GridSize0"]);
@@ -40,7 +40,7 @@ public class Config : MonoBehaviour
         LogDirPath = dic["LogDirPath"];
         MinCellColorV = float.Parse(dic["MinCellColorV"]);
 
-        var dic2 = File.ReadAllLines(_abnormalSpotsPath).Select(l => l.Split(new[] { ')' })).ToArray();
+        var dic2 = File.ReadAllLines(Path.Combine(Application.streamingAssetsPath, _abnormalSpotsPath)).Select(l => l.Split(new[] { ')' })).ToArray();
         string[] coords;
         int[] coordsInt;
         double val;
