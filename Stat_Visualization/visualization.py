@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     create_plot(x, hyphal_sum,
                 "Hyphal Cells", path, "Hyphal Cells")
-    create_plot(range(len(hyphal_sum) - 1), [hyphal_sum[i+1] - hyphal_sum[i] for i in range(len(hyphal_sum) - 1)],
+    create_plot(x[:-1], [hyphal_sum[i+1] - hyphal_sum[i] for i in range(len(hyphal_sum) - 1)],
                 "Hyphal Difference", path, "Hyphal Difference", "scatter")
 
-    create_plot(x, hyphal_sum / (data['Tip']-13), "HGU", path, "HGU")
+    create_plot(x, hyphal_sum / data['Tip'], "HGU", path, "HGU")
